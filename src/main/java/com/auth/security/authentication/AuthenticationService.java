@@ -4,16 +4,12 @@ import com.auth.security.config.JwtService;
 import com.auth.security.model.Role;
 import com.auth.security.model.User;
 import com.auth.security.model.UserRepository;
-import com.sun.jdi.event.ExceptionEvent;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.w3c.dom.events.EventException;
 
 import java.util.Date;
 
@@ -44,11 +40,15 @@ public class AuthenticationService {
             return AuthenticationResponse.builder()
                     .token(jwtToken)
                     .build();
-        } catch (Exception e){
-            return AuthenticationResponse.builder()
-                    .error("The email: '" + request.getEmail() + "' has been taken.").build();
-        }
+        } catch (DataIntegrityViolationException e){
 
+            return AuthenticationResponse.builder()
+                    .error("An error has occurred while trying to register the user, please try again.").build();
+
+        } catch (Exception e) {
+            return AuthenticationResponse.builder()
+                    .error("An unknown error has occurred while trying to register the user, please try again.").build();
+        }
 
     }
 
