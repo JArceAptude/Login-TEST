@@ -10,6 +10,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -27,6 +28,12 @@ public class User implements UserDetails {
     @Column(unique=true)
     private String email;
     private String password;
+    @Column(name = "last_login")
+    private Date lastLogin;
+    @Column(name = "date_joined")
+    private Date dateJoined;
+    @Column(name = "is_active")
+    private Boolean isActive;
     @Enumerated(EnumType.STRING)
     private Role role;
 

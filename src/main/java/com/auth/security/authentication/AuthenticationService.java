@@ -15,6 +15,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.events.EventException;
 
+import java.util.Date;
+
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
@@ -25,11 +27,16 @@ public class AuthenticationService {
 
     public AuthenticationResponse register(RegisterRequest request, Role role) {
         try{
+            Date date = new Date();
+
             var user = User.builder()
                     .firstname(request.getFirstname())
                     .lastname(request.getLastname())
                     .email(request.getEmail())
                     .password(passwordEncoder.encode(request.getPassword()))
+                    .dateJoined(date)
+                    .lastLogin(date)
+                    .isActive(true)
                     .role(role)
                     .build();
             userRepository.save(user);
@@ -47,10 +54,17 @@ public class AuthenticationService {
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         try {
+            User latestLoginUser = new User();
+
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
             var user = userRepository.findByEmail(request.getEmail())
                     .orElseThrow();
             var jwtToken = jwtService.generateToken(user);
+
+
+            latestLoginUser = updateLastLogin(user);
+            userRepository.save(latestLoginUser);
+
             return AuthenticationResponse.builder()
                     .token(jwtToken)
                     .build();
@@ -59,5 +73,12 @@ public class AuthenticationService {
                     .error("An error occurred when trying to authenticate the user.").build();
         }
 
+    }
+
+    private User updateLastLogin(User user){
+        Date date = new Date();
+
+        user.setLastLogin(date);
+        return  user;
     }
 }

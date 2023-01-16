@@ -1,3 +1,6 @@
-insert into _user (email, firstname, lastname, password, role, id) values ('user@gmail.com','user','resu','$2a$12$UoqHskbHLoXguSySAJke8.mjTmQKj1Zz93R.fgwzibh6HDaHo5oBe','USER',1);
-insert into _user (email, firstname, lastname, password, role, id) values ('admin@gmail.com','admin','nimda','$2a$12$UoqHskbHLoXguSySAJke8.mjTmQKj1Zz93R.fgwzibh6HDaHo5oBe','ADMIN',2);
-insert into _user (email, firstname, lastname, password, role, id) values ('mod@gmail.com','mod','dom','$2a$12$UoqHskbHLoXguSySAJke8.mjTmQKj1Zz93R.fgwzibh6HDaHo5oBe','MODERATOR',3);
+--insert into _user (email, firstname, lastname, password, role, id) values ('user@gmail.com','user','resu','$2a$12$UoqHskbHLoXguSySAJke8.mjTmQKj1Zz93R.fgwzibh6HDaHo5oBe','USER',1);
+--insert into _user (email, firstname, lastname, password, role, id) values ('admin@gmail.com','admin','nimda','$2a$12$UoqHskbHLoXguSySAJke8.mjTmQKj1Zz93R.fgwzibh6HDaHo5oBe','ADMIN',2);
+--insert into _user (email, firstname, lastname, password, role, id) values ('mod@gmail.com','mod','dom','$2a$12$UoqHskbHLoXguSySAJke8.mjTmQKj1Zz93R.fgwzibh6HDaHo5oBe','MODERATOR',3);
+insert into _user(email, firstname, lastname, password, date_joined, last_login, is_active, role, id) values ('user@gmail.com', 'User', 'Resu', '$2a$10$UiYNO2nXyyQ0Awxb2CCzMeI9BaMEKQ2gq2GkjO3FkR8QeSo6KJEFK', '2023-01-16 10:38:01.383', '2023-01-16 10:38:01.383', true, 'USER', 1);
+insert into _user(email, firstname, lastname, password, date_joined, last_login, is_active, role, id) values ('mod@gmail.com', 'Mod', 'Dom', '$2a$10$UiYNO2nXyyQ0Awxb2CCzMeI9BaMEKQ2gq2GkjO3FkR8QeSo6KJEFK', '2023-01-16 10:38:01.383', '2023-01-16 10:38:01.383', true, 'MODERATOR', 2);
+insert into _user(email, firstname, lastname, password, date_joined, last_login, is_active, role, id) values ('admin@gmail.com', 'Admin', 'Nimda', '$2a$10$UiYNO2nXyyQ0Awxb2CCzMeI9BaMEKQ2gq2GkjO3FkR8QeSo6KJEFK', '2023-01-16 10:38:01.383', '2023-01-16 10:38:01.383', true, 'ADMIN', 3);
