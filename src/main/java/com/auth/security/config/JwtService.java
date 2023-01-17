@@ -19,6 +19,8 @@ import java.util.function.Function;
 public class JwtService {
     @Value("${airlines.app.jwtSecret}")
     private String SECRET_KEY;
+    @Value("${airlines.app.expiration}")
+    private Long expiration;
     public String extractUsername(String jwtToken) {
         return extractClaims(jwtToken,Claims::getSubject);
     }
@@ -38,7 +40,7 @@ public class JwtService {
                 .setSubject(userDetails.getUsername())
                 .claim("authorities",userDetails.getAuthorities())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis()+1000*60*24))
+                .setExpiration(new Date(System.currentTimeMillis()+expiration*60*24))
                 .signWith(getSigninKey(), SignatureAlgorithm.HS512)
                 .compact();
     }
