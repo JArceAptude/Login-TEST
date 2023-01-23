@@ -1,6 +1,7 @@
 package com.auth.security.authentication;
 
 import com.auth.security.model.Role;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,12 +23,14 @@ public class AuthenticationController {
 
     @PostMapping("/register/mod")
     @PreAuthorize("hasAuthority('MODERATOR') or hasAuthority('ADMIN')")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<AuthenticationResponse> modRegister(@RequestBody RegisterRequest request){
         return ResponseEntity.ok(authService.register(request, Role.MODERATOR));
     }
 
     @PostMapping("/register/admin")
     @PreAuthorize("hasAuthority('ADMIN')")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<AuthenticationResponse> adminRegister(@RequestBody RegisterRequest request){
         return ResponseEntity.ok(authService.register(request, Role.ADMIN));
     }
