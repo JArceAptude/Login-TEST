@@ -4,10 +4,7 @@ import com.auth.security.model.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -35,5 +32,35 @@ public class AuthenticationController {
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request){
         return ResponseEntity.ok(authService.authenticate(request));
+    }
+
+    @PutMapping("/update/{id}")
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('MODERATOR') or hasAuthority('ADMIN')")
+    public ResponseEntity<AuthenticationResponse> userUpdate(@RequestBody RegisterRequest request,@PathVariable("id") Integer id){
+        return ResponseEntity.ok(authService.update(request, id, Role.USER));
+    }
+
+    @PutMapping("/update/mod/{id}")
+    @PreAuthorize("hasAuthority('MODERATOR') or hasAuthority('ADMIN')")
+    public ResponseEntity<AuthenticationResponse> modUpdate(@RequestBody RegisterRequest request,@PathVariable("id") Integer id){
+        return ResponseEntity.ok(authService.update(request, id, Role.MODERATOR));
+    }
+
+    @PutMapping("/update/admin/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<AuthenticationResponse> adminUpdate(@RequestBody RegisterRequest request,@PathVariable("id") Integer id){
+        return ResponseEntity.ok(authService.update(request, id, Role.ADMIN));
+    }
+
+    @DeleteMapping("/delete/mod/{id}")
+    @PreAuthorize("hasAuthority('MODERATOR') or hasAuthority('ADMIN')")
+    public ResponseEntity<AuthenticationResponse> deleteMod(@PathVariable("id") Integer id, Role role){
+        return ResponseEntity.ok(authService.delete(id, Role.MODERATOR));
+    }
+
+    @DeleteMapping("/delete/admin/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<AuthenticationResponse> deleteAdmin(@PathVariable("id") Integer id, Role role){
+        return ResponseEntity.ok(authService.delete(id, Role.ADMIN));
     }
 }
