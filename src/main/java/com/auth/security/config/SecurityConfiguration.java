@@ -23,14 +23,9 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         http.csrf().disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/api/v1/auth/**").permitAll()
-                .requestMatchers("/swagger-ui.html").permitAll()
-                .requestMatchers("/swagger-ui/**").permitAll()
-                .requestMatchers("/swagger-resources/**").permitAll()
-                .requestMatchers("/v2/api-docs/**").permitAll()
-                .requestMatchers("/v3/api-docs/**").permitAll()
-                .requestMatchers("/webjars/**").permitAll()
-                .requestMatchers("/h2-ui").authenticated()
+                .requestMatchers("/api/v1/auth/**")
+                .permitAll()
+                //.requestMatchers("/h2-ui/**").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
@@ -39,6 +34,8 @@ public class SecurityConfiguration {
                 .and()
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+
         return http.build();
     }
 }
