@@ -27,7 +27,7 @@ public class AuthenticationService {
         try{
             Date date = new Date();
 
-            var user = User.builder()
+            User user = User.builder()
                     .firstname(request.getFirstname())
                     .lastname(request.getLastname())
                     .email(request.getEmail())
@@ -38,7 +38,7 @@ public class AuthenticationService {
                     .role(role)
                     .build();
             userRepository.save(user);
-            var jwtToken = jwtService.generateToken(user);
+            String jwtToken = jwtService.generateToken(user);
             return AuthenticationResponse.builder()
                     .token(jwtToken)
                     .build();
@@ -59,9 +59,9 @@ public class AuthenticationService {
             User latestLoginUser = new User();
 
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
-            var user = userRepository.findByEmail(request.getEmail())
+            User user = userRepository.findByEmail(request.getEmail())
                     .orElseThrow();
-            var jwtToken = jwtService.generateToken(user);
+            String jwtToken = jwtService.generateToken(user);
 
 
             latestLoginUser = updateLastLogin(user);

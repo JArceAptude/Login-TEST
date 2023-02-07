@@ -25,6 +25,14 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests()
                 .requestMatchers("/api/v1/auth/**")
                 .permitAll()
+                // SWAGGER REQUISITES
+                .requestMatchers("/swagger-ui.html").permitAll()
+                .requestMatchers("/swagger-ui/**").permitAll()
+                .requestMatchers("/swagger-resources/**").permitAll()
+                .requestMatchers("/v2/api-docs/**").permitAll()
+                .requestMatchers("/v3/api-docs/**").permitAll()
+                .requestMatchers("/webjars/**").permitAll()
+                // ========
                 //.requestMatchers("/h2-ui/**").permitAll()
                 .anyRequest()
                 .authenticated()
