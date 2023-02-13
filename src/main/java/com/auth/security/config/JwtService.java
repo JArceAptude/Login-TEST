@@ -21,6 +21,9 @@ public class JwtService {
     private String SECRET_KEY;
     @Value("${airlines.app.expiration}")
     private Long expiration;
+
+    @Value("${airlines.app.refreshtoken}")
+    private Long expirationRefreshToken;
     public String extractUsername(String jwtToken) {
         return extractClaims(jwtToken,Claims::getSubject);
     }
@@ -44,6 +47,22 @@ public class JwtService {
                 .signWith(getSigninKey(), SignatureAlgorithm.HS512)
                 .compact();
     }
+
+    public String generateTokenRefreshToken(UserDetails userDetails){
+        return generateTokenRefreshToken(new HashMap<>(),userDetails);
+    }
+
+    public String generateTokenRefreshToken(Map<String,Object> extractedClaims, UserDetails userDetails){
+        return Jwts.builder()
+                .setClaims(extractedClaims)
+                .setSubject(userDetails.getUsername())
+                .claim("authorities",userDetails.getAuthorities())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis()+expirationRefreshToken*60*24))
+                .signWith(getSigninKey(), SignatureAlgorithm.HS512)
+                .compact();
+    }
+
 
     public boolean isTokenValid(String token, UserDetails userDetails){
         final String username = extractUsername(token);
