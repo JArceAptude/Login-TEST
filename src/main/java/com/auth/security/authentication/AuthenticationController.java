@@ -2,12 +2,15 @@ package com.auth.security.authentication;
 
 import com.auth.security.model.Role;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import com.auth.security.model.User;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.responses.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -100,5 +103,16 @@ public class AuthenticationController {
     })
     public ResponseEntity<AuthenticationResponse> deleteAdmin(@PathVariable("id") Integer id, Role role){
         return ResponseEntity.ok(authService.delete(id, Role.ADMIN));
+    }
+
+    @GetMapping("/getAll")
+    public List<User> getAll(){
+        return authService.getUsers();
+    }
+
+    @GetMapping("/refreshToken")
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('MODERATOR') or hasAuthority('ADMIN')")
+    public ResponseEntity<AuthenticationResponse> refreshToken(){
+        return ResponseEntity.ok(authService.refreshToken());
     }
 }
