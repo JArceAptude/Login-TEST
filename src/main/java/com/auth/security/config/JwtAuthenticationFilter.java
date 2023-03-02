@@ -16,11 +16,41 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+/**
+ * Intercepts the HTTP request and filters.
+ * <br><br>
+ *
+ * Dependencies Injected:
+ * <ul>
+ *     <li>JwtService</li>
+ *     <li>UserDetailsService</li>
+ * </ul>
+ *
+ *
+ *
+ * @see RequiredArgsConstructor
+ * @see OncePerRequestFilter
+ */
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
+
+    /**
+     * Checks if we have a JwsToken, if we don't. Return.
+     * If we have a JwsToken, extract the Username from the Token.
+     * If there is no username AND there is no authenticated user active
+     * We obtain the user details.
+     * Validate if the token is valid, anf if it is valid.
+     * Te SecurityContext is updated with the authenticated user information.
+     *
+     * @param request Data from the request
+     * @param response Data from the response
+     * @param filterChain Contains the list of ordered filters
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
                                     @NonNull HttpServletResponse response,
