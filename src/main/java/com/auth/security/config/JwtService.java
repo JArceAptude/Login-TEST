@@ -26,7 +26,7 @@ public class JwtService {
     private Long expirationRefreshToken;
 
     /**
-     * Extracts the Username from the provided JWT Token.
+     * Extracts the Username from the provided JWT Token, using the method extractClaims.
      * @param jwtToken String
      * @return Username as String
      */

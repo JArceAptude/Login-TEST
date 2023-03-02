@@ -31,7 +31,7 @@ public class AuthenticationService {
      * Used to register users passing the RegisterRequest and Role of the user.
      * @param request RegisterRequest object.
      * @param role Role of the new user.
-     * @return
+     * @return AuthenticationResponse
      */
     public AuthenticationResponse register(RegisterRequest request, Role role) {
         try{
@@ -75,7 +75,7 @@ public class AuthenticationService {
      * Validates if the user and password provider are of an user registered in the database. If so, it returns
      * a valid  JwtToken for the User.
      * @param request AuthenticationRequest object. Email and Password.
-     * @return
+     * @return AuthenticationResponse
      */
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         try {
@@ -111,7 +111,7 @@ public class AuthenticationService {
      * @param request New data for the user.
      * @param id Id of the user.
      * @param role Role of the user that is updating the date of the modified user.
-     * @return
+     * @return AuthenticationResponse
      */
     public AuthenticationResponse update(RegisterRequest request, Integer id, Role role){
         try{
@@ -188,7 +188,7 @@ public class AuthenticationService {
      * Changes the isActive status from the user from True to False. Doesn't delete the user.
      * @param id Id of the user to Delete
      * @param role Role of the user that is Deleting the first user.
-     * @return
+     * @return AuthenticationResponse
      */
     public AuthenticationResponse delete(Integer id, Role role){
         try{
@@ -228,7 +228,7 @@ public class AuthenticationService {
 
     /**
      * Generates a new token with an extended expiration date for the current user.
-     * @return
+     * @return AuthenticationResponse
      */
     public AuthenticationResponse refreshToken(){
         try{
@@ -248,6 +248,11 @@ public class AuthenticationService {
         }
     }
 
+    /**
+     * Executes the method findAll() from UserRepository to obtain all the users in the database.
+     * If it fails, returns an empty list.
+     * @return List
+     */
     public List<User> getUsers(){
         try{
             return userRepository.findAll();
@@ -255,6 +260,12 @@ public class AuthenticationService {
             return Collections.emptyList();
         }
     }
+
+    /**
+     * Updates the User's lastLogin attribute to match the current date.
+     * @param user User
+     * @return User
+     */
     private User updateLastLogin(User user){
         Date date = new Date();
 
