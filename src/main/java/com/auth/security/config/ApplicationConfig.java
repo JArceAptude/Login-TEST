@@ -1,6 +1,6 @@
 package com.auth.security.config;
 
-import com.auth.security.model.UserRepository;
+import com.auth.security.model.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

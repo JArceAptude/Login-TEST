@@ -2,6 +2,9 @@ package com.auth.security.authentication;
 
 import com.auth.security.config.JwtService;
 import com.auth.security.model.*;
+import com.auth.security.model.repository.LogRepository;
+import com.auth.security.model.repository.RoleRepository;
+import com.auth.security.model.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -22,19 +25,22 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
-
     private final LogRepository logRepository;
-
+    private final RoleRepository roleRepository;
     private AdminLog  adminLog =  new AdminLog();
 
     /**
      * Used to register users passing the RegisterRequest and Role of the user.
      * @param request RegisterRequest object.
-     * @param role Role of the new user.
      * @return AuthenticationResponse
      */
-    public AuthenticationResponse register(RegisterRequest request, Role role) {
+    public AuthenticationResponse register(RegisterRequest request) {
         try{
+
+            /* TODO
+                Validate the permissions of the user for the creation of User with certain Roles
+             */
+
             Date date = new Date();
 
             var user = User.builder()
@@ -45,7 +51,7 @@ public class AuthenticationService {
                     .dateJoined(date)
                     .lastLogin(date)
                     .isActive(true)
-                    .role(role)
+                    .role(roleRepository.findById(request.getRoleId()).get())
                     .build();
             userRepository.save(user);
             var jwtToken = jwtService.generateToken(user);
@@ -110,15 +116,16 @@ public class AuthenticationService {
      * Updates the data of a User.
      * @param request New data for the user.
      * @param id Id of the user.
-     * @param role Role of the user that is updating the date of the modified user.
      * @return AuthenticationResponse
      */
-    public AuthenticationResponse update(RegisterRequest request, Integer id, Role role){
-        try{
+    public AuthenticationResponse update(RegisterRequest request, Integer id){
+        /*try{
             User newUser = new User();
             User oldUser = userRepository.findById(id).get();
             User userID = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow();
+            Role role = roleRepository.findById(request.getRoleId()).get();
 
+            // Check for a User with Role USER
             if(role == Role.USER && oldUser.getRole() == Role.USER && request.getRole() == Role.USER){
                 if(userID.getId() == id){
                     oldUser.setFirstname(request.getFirstname());
@@ -141,6 +148,7 @@ public class AuthenticationService {
                         .error("User tried to update another account, please try with your account.").build();
             }
 
+            // Check for a User with Role MODERATOR
             if(role == Role.MODERATOR && (oldUser.getRole() == Role.MODERATOR || oldUser.getRole() == Role.USER) && (request.getRole() != Role.ADMIN)){
                 oldUser.setFirstname(request.getFirstname());
                 oldUser.setLastname(request.getLastname());
@@ -158,6 +166,7 @@ public class AuthenticationService {
                         .build();
             }
 
+            // Check for a User with Role ADMIN
             if (role == Role.ADMIN &&(oldUser.getRole() == Role.ADMIN || oldUser.getRole() == Role.MODERATOR || oldUser.getRole() == Role.USER)){
                 oldUser.setFirstname(request.getFirstname());
                 oldUser.setLastname(request.getLastname());
@@ -181,18 +190,18 @@ public class AuthenticationService {
             creageLog("UPDATE", "Something when wrong while updating",SecurityContextHolder.getContext().getAuthentication().getName());
             return AuthenticationResponse.builder()
                     .error("Something when wrong while updating").build();
-        }
+        }*/
+        return null;
     }
 
     /**
      * Changes the isActive status from the user from True to False. Doesn't delete the user.
      * @param id Id of the user to Delete
-     * @param role Role of the user that is Deleting the first user.
      * @return AuthenticationResponse
      */
-    public AuthenticationResponse delete(Integer id, Role role){
-        try{
-            User deletedUser = new User();
+    public AuthenticationResponse delete(Integer id){
+        /*try{
+            User deletedUser;
 
             User userQuery = userRepository.findById(id).get();
             if(role == Role.MODERATOR && (userQuery.getRole() == Role.MODERATOR
@@ -223,7 +232,8 @@ public class AuthenticationService {
             creageLog("DELETE", "Something when wrong while deleting.",SecurityContextHolder.getContext().getAuthentication().getName());
             return AuthenticationResponse.builder()
                  .error("Something when wrong while deleting.").build();
-        }
+        }*/
+        return null;
     }
 
     /**
