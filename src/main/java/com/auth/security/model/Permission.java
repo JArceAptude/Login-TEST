@@ -1,5 +1,6 @@
 package com.auth.security.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,19 +14,19 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name="_permission")
+@JsonIgnoreProperties("roles")
+@Table(name="_permissions")
 public class Permission {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String name;
 
-    @ManyToMany
-    @JoinTable(
-            name = "user_permission",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "premission_id"))
-    private List<User> permitedUsers;
+    @Column(unique = true)
+    private String name;
+    private String description;
+
+    @ManyToMany(mappedBy = "rolePermissions")
+    private List<Role> roles;
 
 }

@@ -33,7 +33,7 @@ public class AuthenticationController {
      */
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request){
-        return ResponseEntity.ok(authService.register(request, Role.USER));
+        return ResponseEntity.ok(authService.register(request));
     }
 
     /**
@@ -41,24 +41,24 @@ public class AuthenticationController {
      * @param request RegisterRequest object. User data.
      * @return ResponseEntity
      */
-    @PostMapping("/register/mod")
+    /*@PostMapping("/register/mod")
     @PreAuthorize("hasAuthority('MODERATOR') or hasAuthority('ADMIN')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<AuthenticationResponse> modRegister(@RequestBody RegisterRequest request){
-        return ResponseEntity.ok(authService.register(request, Role.MODERATOR));
-    }
+        return ResponseEntity.ok(authService.register(request));
+    }*/
 
     /**
      * Endpoint for the registration of users with the role ADMIN.
      * @param request RegisterRequest object. User data.
      * @return ResponseEntity
      */
-    @PostMapping("/register/admin")
+  /*@PostMapping("/register/admin")
     @PreAuthorize("hasAuthority('ADMIN')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<AuthenticationResponse> adminRegister(@RequestBody RegisterRequest request){
         return ResponseEntity.ok(authService.register(request, Role.ADMIN));
-    }
+    }*/
 
     /**
      * Endpoint for user Authentication.
@@ -80,7 +80,7 @@ public class AuthenticationController {
     @PreAuthorize("hasAuthority('USER') or hasAuthority('MODERATOR') or hasAuthority('ADMIN')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<AuthenticationResponse> userUpdate(@RequestBody RegisterRequest request,@PathVariable("id") Integer id){
-        return ResponseEntity.ok(authService.update(request, id, Role.USER));
+        return ResponseEntity.ok(authService.update(request, id));
     }
 
     /**
@@ -93,7 +93,7 @@ public class AuthenticationController {
     @PreAuthorize("hasAuthority('MODERATOR') or hasAuthority('ADMIN')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<AuthenticationResponse> modUpdate(@RequestBody RegisterRequest request,@PathVariable("id") Integer id){
-        return ResponseEntity.ok(authService.update(request, id, Role.MODERATOR));
+        return ResponseEntity.ok(authService.update(request, id));
     }
 
     /**
@@ -106,7 +106,7 @@ public class AuthenticationController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<AuthenticationResponse> adminUpdate(@RequestBody RegisterRequest request,@PathVariable("id") Integer id){
-        return ResponseEntity.ok(authService.update(request, id, Role.ADMIN));
+        return ResponseEntity.ok(authService.update(request, id));
     }
 
     /**
@@ -119,7 +119,7 @@ public class AuthenticationController {
     @PreAuthorize("hasAuthority('MODERATOR') or hasAuthority('ADMIN')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<AuthenticationResponse> deleteMod(@PathVariable("id") Integer id, Role role){
-        return ResponseEntity.ok(authService.delete(id, Role.MODERATOR));
+        return ResponseEntity.ok(authService.delete(id));
     }
 
     /**
@@ -132,7 +132,7 @@ public class AuthenticationController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<AuthenticationResponse> deleteAdmin(@PathVariable("id") Integer id, Role role){
-        return ResponseEntity.ok(authService.delete(id, Role.ADMIN));
+        return ResponseEntity.ok(authService.delete(id));
     }
 
     /**

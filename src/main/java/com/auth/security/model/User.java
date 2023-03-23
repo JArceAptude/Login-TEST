@@ -1,5 +1,6 @@
 package com.auth.security.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,15 +35,14 @@ public class User implements UserDetails {
     private Date dateJoined;
     @Column(name = "is_active")
     private Boolean isActive;
-    @Enumerated(EnumType.STRING)
+    @JoinColumn(name = "role")
+    @ManyToOne(targetEntity = Role.class, fetch = FetchType.EAGER)
+    @JsonIgnore
     private Role role;
-
-    @ManyToMany(mappedBy = "permitedUsers")
-    List<Permission> permissions;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        return role.getAuthorities();
     }
 
     @Override
