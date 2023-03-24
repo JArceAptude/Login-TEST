@@ -1,10 +1,12 @@
-package com.auth.security.authentication;
+package com.auth.security.model.controller;
 
+import com.auth.security.authentication.AuthenticationRequest;
+import com.auth.security.authentication.AuthenticationResponse;
+import com.auth.security.model.service.AuthenticationService;
+import com.auth.security.authentication.RegisterRequest;
 import com.auth.security.model.Role;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import com.auth.security.model.User;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.responses.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -32,6 +34,8 @@ public class AuthenticationController {
      * @return ResponseEntity
      */
     @PostMapping("/register")
+    @PreAuthorize("hasAuthority('edit_all_users')")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request){
         return ResponseEntity.ok(authService.register(request));
     }

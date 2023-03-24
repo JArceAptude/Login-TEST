@@ -5,7 +5,9 @@ import com.auth.security.model.PermissionRequest;
 import com.auth.security.model.ResponseObject;
 import com.auth.security.model.repository.PermissionRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,6 +33,9 @@ public class PermissionService {
     }
 
     public List<Permission> getAll(){
+
+        val a = SecurityContextHolder.getContext().getAuthentication().getName();
+
         return permissionRepository.findAll();
     }
 
