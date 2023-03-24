@@ -7,6 +7,7 @@ import com.auth.security.model.service.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/all")
+    @PreAuthorize("hasAuthority('edit_all_users')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<List<Optional>> getAllActiveUsers(){
         return ResponseEntity.ok(userService.getAllActiveUsers());

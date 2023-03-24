@@ -1,5 +1,8 @@
-package com.auth.security.authentication;
+package com.auth.security.model.service;
 
+import com.auth.security.authentication.AuthenticationRequest;
+import com.auth.security.authentication.AuthenticationResponse;
+import com.auth.security.authentication.RegisterRequest;
 import com.auth.security.config.JwtService;
 import com.auth.security.model.*;
 import com.auth.security.model.repository.LogRepository;
@@ -7,6 +10,7 @@ import com.auth.security.model.repository.RoleRepository;
 import com.auth.security.model.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -40,6 +44,8 @@ public class AuthenticationService {
             /* TODO
                 Validate the permissions of the user for the creation of User with certain Roles
              */
+
+            val a = SecurityContextHolder.getContext().getAuthentication().getName();
 
             Date date = new Date();
 

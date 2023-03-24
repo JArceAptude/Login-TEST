@@ -5,6 +5,7 @@ import com.auth.security.model.ResponseObject;
 import com.auth.security.model.User;
 import com.auth.security.model.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ public class UserService {
     private final UserRepository userRepository;
 
     public List<Optional> getAllActiveUsers(){
+        val a = SecurityContextHolder.getContext().getAuthentication().getName();
         return Collections.singletonList(userRepository.findAllByIsActive(true));
     }
 

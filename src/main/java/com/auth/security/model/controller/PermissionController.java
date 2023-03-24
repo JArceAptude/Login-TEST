@@ -5,18 +5,21 @@ import com.auth.security.model.PermissionRequest;
 import com.auth.security.model.ResponseObject;
 import com.auth.security.model.service.PermissionService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/permission")
+@RequiredArgsConstructor
 public class PermissionController {
 
     @Autowired
-    private PermissionService permissionService;
+    private final PermissionService permissionService;
 
     @PostMapping("/new")
     @SecurityRequirement(name = "Bearer Authentication")
@@ -31,6 +34,7 @@ public class PermissionController {
     }
 
     @GetMapping("/read/all")
+    @PreAuthorize("hasAuthority('edit_all_users')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<List<Permission>> getAllPermissions(){
         return ResponseEntity.ok(permissionService.getAll());
