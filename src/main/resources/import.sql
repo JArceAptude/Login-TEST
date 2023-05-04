@@ -1,6 +1,6 @@
-Insert Into _roles(id, name, description) values (1, 'ADMIN', 'Admin User');
-Insert Into _roles(id, name, description) values (2, 'MODERATOR', 'Moderator User');
-Insert Into _roles(id, name, description) values (3, 'USER', 'Basic User');
+Insert Into _roles(id, name, description, priority) values (1, 'ADMIN', 'Admin User',3);
+Insert Into _roles(id, name, description, priority) values (2, 'MODERATOR', 'Moderator User',2);
+Insert Into _roles(id, name, description, priority) values (3, 'USER', 'Basic User',1);
 
 Insert Into _permissions (id, name, description) VALUES (1, 'edit_all_users', 'Allows the user to edit all users');
 Insert Into _permissions (id, name, description) VALUES (2, 'create_all_users', 'Allows the user to create another users with any type of role');
@@ -17,6 +17,10 @@ Insert Into _permissions (id, name, description) VALUES (12, 'read_permissions',
 Insert Into _permissions (id, name, description) VALUES (13, 'update_permissions', 'Allows the user to create permissions');
 Insert Into _permissions (id, name, description) VALUES (14, 'delete_permissions', 'Allows the user to create permissions');
 Insert Into _permissions (id, name, description) VALUES (15, 'admin_permissions', 'Allows the user all actions over the permissions');
+Insert Into _permissions (id, name, description) VALUES (16, 'user_permissions', 'Allows the user all basic over permissions');
+Insert Into _permissions (id, name, description) VALUES (17, 'edit_user', 'Allows the user to edit it own profile.');
+Insert Into _permissions (id, name, description) VALUES (18, 'delete_users', 'Allows the user to delete users.');
+
 
 Insert Into roles_permissions (role_id, permission_id) VALUES (1, 1);
 Insert Into roles_permissions (role_id, permission_id) VALUES (1, 2);
@@ -27,7 +31,11 @@ Insert Into roles_permissions (role_id, permission_id) VALUES (2, 1);
 Insert Into roles_permissions (role_id, permission_id) VALUES (2, 2);
 Insert Into roles_permissions (role_id, permission_id) VALUES (2, 3);
 Insert Into roles_permissions (role_id, permission_id) VALUES (2, 4);
+Insert Into roles_permissions (role_id, permission_id) VALUES (2, 18);
+Insert Into roles_permissions (role_id, permission_id) VALUES (3, 16);
+Insert Into roles_permissions (role_id, permission_id) VALUES (3, 17);
 
-insert into _user(email, firstname, lastname, password, date_joined, last_login, is_active, role, id) values ('user@gmail.com', 'User', 'Resu', '$2a$10$UiYNO2nXyyQ0Awxb2CCzMeI9BaMEKQ2gq2GkjO3FkR8QeSo6KJEFK', '2023-01-16 10:38:01.383', '2023-01-16 10:38:01.383', true, 1, 1);
+
+insert into _user(email, firstname, lastname, password, date_joined, last_login, is_active, role, id) values ('user@gmail.com', 'User', 'Resu', '$2a$10$UiYNO2nXyyQ0Awxb2CCzMeI9BaMEKQ2gq2GkjO3FkR8QeSo6KJEFK', '2023-01-16 10:38:01.383', '2023-01-16 10:38:01.383', true, 3, 1);
 insert into _user(email, firstname, lastname, password, date_joined, last_login, is_active, role, id) values ('mod@gmail.com', 'Mod', 'Dom', '$2a$10$UiYNO2nXyyQ0Awxb2CCzMeI9BaMEKQ2gq2GkjO3FkR8QeSo6KJEFK', '2023-01-16 10:38:01.383', '2023-01-16 10:38:01.383', true, 2, 2);
-insert into _user(email, firstname, lastname, password, date_joined, last_login, is_active, role, id) values ('admin@gmail.com', 'Admin', 'Nimda', '$2a$10$UiYNO2nXyyQ0Awxb2CCzMeI9BaMEKQ2gq2GkjO3FkR8QeSo6KJEFK', '2023-01-16 10:38:01.383', '2023-01-16 10:38:01.383', true, 3, 3);
+insert into _user(email, firstname, lastname, password, date_joined, last_login, is_active, role, id) values ('admin@gmail.com', 'Admin', 'Nimda', '$2a$10$UiYNO2nXyyQ0Awxb2CCzMeI9BaMEKQ2gq2GkjO3FkR8QeSo6KJEFK', '2023-01-16 10:38:01.383', '2023-01-16 10:38:01.383', true, 1, 3);

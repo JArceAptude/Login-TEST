@@ -30,6 +30,7 @@ public class RoleService {
     public Role saveRole(RoleRequest request){
 
         var role = Role.builder()
+                .id(getTotalRoles()+1)
                 .name(request.getName())
                 .description(request.getDescription())
                 .rolePermissions(permissionRepository.findAllById(request.getPermissionIds()))
@@ -51,11 +52,33 @@ public class RoleService {
 
     }
 
+    public Role getByPriority(Integer priority){
+        try{
+            List<Role> roles = roleRepository.findAll();
+            for(int i = 0; i < roles.size(); i++){
+                if(roles.get(i).getPriority() == priority){
+                    return roles.get(i);
+                }
+            }
+            return null;
+        }catch(Exception e){
+            return null;
+        }
+    }
+
     public Role update(Role permission){
         return roleRepository.save(permission);
     }
 
     public void delete(Integer id){
         roleRepository.deleteById(id);
+    }
+
+    private int getTotalRoles(){
+        List<Role> roles = roleRepository.findAll();
+        if(roles.isEmpty()){
+            return 0;
+        }
+        return roles.size();
     }
 }

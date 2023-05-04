@@ -2,6 +2,7 @@ package com.auth.security.model.controller;
 
 import com.auth.security.authentication.AuthenticationRequest;
 import com.auth.security.authentication.AuthenticationResponse;
+import com.auth.security.authentication.PasswordRequest;
 import com.auth.security.model.service.AuthenticationService;
 import com.auth.security.authentication.RegisterRequest;
 import com.auth.security.model.Role;
@@ -34,35 +35,10 @@ public class AuthenticationController {
      * @return ResponseEntity
      */
     @PostMapping("/register")
-    @PreAuthorize("hasAuthority('edit_all_users')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request){
         return ResponseEntity.ok(authService.register(request));
     }
-
-    /**
-     * Endpoint for the registration of users with the role MODERATOR.
-     * @param request RegisterRequest object. User data.
-     * @return ResponseEntity
-     */
-    /*@PostMapping("/register/mod")
-    @PreAuthorize("hasAuthority('MODERATOR') or hasAuthority('ADMIN')")
-    @SecurityRequirement(name = "Bearer Authentication")
-    public ResponseEntity<AuthenticationResponse> modRegister(@RequestBody RegisterRequest request){
-        return ResponseEntity.ok(authService.register(request));
-    }*/
-
-    /**
-     * Endpoint for the registration of users with the role ADMIN.
-     * @param request RegisterRequest object. User data.
-     * @return ResponseEntity
-     */
-  /*@PostMapping("/register/admin")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @SecurityRequirement(name = "Bearer Authentication")
-    public ResponseEntity<AuthenticationResponse> adminRegister(@RequestBody RegisterRequest request){
-        return ResponseEntity.ok(authService.register(request, Role.ADMIN));
-    }*/
 
     /**
      * Endpoint for user Authentication.
@@ -81,61 +57,22 @@ public class AuthenticationController {
      * @return ResponseEntity
      */
     @PutMapping("/update/{id}")
-    @PreAuthorize("hasAuthority('USER') or hasAuthority('MODERATOR') or hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('edit_user') or hasAuthority('edit_all_users')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<AuthenticationResponse> userUpdate(@RequestBody RegisterRequest request,@PathVariable("id") Integer id){
         return ResponseEntity.ok(authService.update(request, id));
     }
 
     /**
-     * Endpoint for Users with Role MODERATOR or ADMIN to update data of a MODERATOR.
-     * @param request RegisterRequest object with the new user data.
-     * @param id Id of the Updated User.
-     * @return ResponseEntity
-     */
-    @PutMapping("/update/mod/{id}")
-    @PreAuthorize("hasAuthority('MODERATOR') or hasAuthority('ADMIN')")
-    @SecurityRequirement(name = "Bearer Authentication")
-    public ResponseEntity<AuthenticationResponse> modUpdate(@RequestBody RegisterRequest request,@PathVariable("id") Integer id){
-        return ResponseEntity.ok(authService.update(request, id));
-    }
-
-    /**
-     * Endpoint for Users with Role ADMIN to update data of an ADMIN.
-     * @param request RegisterRequest object with the new user data.
-     * @param id Id of the Updated User.
-     * @return ResponseEntity
-     */
-    @PutMapping("/update/admin/{id}")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @SecurityRequirement(name = "Bearer Authentication")
-    public ResponseEntity<AuthenticationResponse> adminUpdate(@RequestBody RegisterRequest request,@PathVariable("id") Integer id){
-        return ResponseEntity.ok(authService.update(request, id));
-    }
-
-    /**
      * Endpoint for Users to delete another User
      * @param id Id of the User to Delete
      * @param role Role of the current User
      * @return ResponseEntity
      */
-    @DeleteMapping("/delete/mod/{id}")
-    @PreAuthorize("hasAuthority('MODERATOR') or hasAuthority('ADMIN')")
+    @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasAuthority('delete_all_users') or hasAuthority('delete_users')")
     @SecurityRequirement(name = "Bearer Authentication")
-    public ResponseEntity<AuthenticationResponse> deleteMod(@PathVariable("id") Integer id, Role role){
-        return ResponseEntity.ok(authService.delete(id));
-    }
-
-    /**
-     * Endpoint for Users to delete another User
-     * @param id Id of the User to Delete
-     * @param role Role of the current User
-     * @return ResponseEntity
-     */
-    @DeleteMapping("/delete/admin/{id}")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @SecurityRequirement(name = "Bearer Authentication")
-    public ResponseEntity<AuthenticationResponse> deleteAdmin(@PathVariable("id") Integer id, Role role){
+    public ResponseEntity<AuthenticationResponse> delete(@PathVariable("id") Integer id){
         return ResponseEntity.ok(authService.delete(id));
     }
 
@@ -157,5 +94,11 @@ public class AuthenticationController {
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<AuthenticationResponse> refreshToken(){
         return ResponseEntity.ok(authService.refreshToken());
+    }
+
+    @PostMapping("/recoverPassword")
+    @SecurityRequirement(name = "Bearer Authentication")
+    public String recoverPassword(PasswordRequest request){
+        return authService.recoverPassword(request);
     }
 }

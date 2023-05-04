@@ -24,6 +24,7 @@ public class PermissionService {
     public Permission save(PermissionRequest request){
 
         var permission = Permission.builder()
+                .id(getTotalPermissions()+1)
                 .name(request.getName())
                 .description(request.getDescription())
                 .roles(request.getRoles())
@@ -55,4 +56,11 @@ public class PermissionService {
         permissionRepository.deleteById(id);
     }
 
+    private int getTotalPermissions(){
+        List<Permission> permissions = permissionRepository.findAll();
+        if(permissions.isEmpty()){
+            return 0;
+        }
+        return permissions.size();
+    }
 }

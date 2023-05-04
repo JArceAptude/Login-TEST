@@ -2,6 +2,7 @@ package com.auth.security.model.service;
 
 import com.auth.security.authentication.AuthenticationRequest;
 import com.auth.security.authentication.AuthenticationResponse;
+import com.auth.security.authentication.PasswordRequest;
 import com.auth.security.authentication.RegisterRequest;
 import com.auth.security.config.JwtService;
 import com.auth.security.model.*;
@@ -16,6 +17,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +33,7 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final LogRepository logRepository;
     private final RoleRepository roleRepository;
+    private final RoleService roleService;
     private AdminLog  adminLog =  new AdminLog();
 
     /**
@@ -40,31 +43,91 @@ public class AuthenticationService {
      */
     public AuthenticationResponse register(RegisterRequest request) {
         try{
-
-            /* TODO
-                Validate the permissions of the user for the creation of User with certain Roles
-             */
-
-            val a = SecurityContextHolder.getContext().getAuthentication().getName();
-
+            String email = SecurityContextHolder.getContext().getAuthentication().getName();
+            Role role = roleRepository.findById(request.getRoleId()).get();
+            User registerUser;
             Date date = new Date();
 
-            var user = User.builder()
-                    .firstname(request.getFirstname())
-                    .lastname(request.getLastname())
-                    .email(request.getEmail())
-                    .password(passwordEncoder.encode(request.getPassword()))
-                    .dateJoined(date)
-                    .lastLogin(date)
-                    .isActive(true)
-                    .role(roleRepository.findById(request.getRoleId()).get())
-                    .build();
-            userRepository.save(user);
-            var jwtToken = jwtService.generateToken(user);
-            creageLog("INSERT","The user was created successfully.", user.getEmail());
-            return AuthenticationResponse.builder()
-                    .token(jwtToken)
-                    .build();
+            if(email.equals("anonymousUser")){
+                var user = User.builder()
+                        .id(findTotalUser()+1)
+                        .firstname(request.getFirstname())
+                        .lastname(request.getLastname())
+                        .email(request.getEmail())
+                        .password(passwordEncoder.encode(request.getPassword()))
+                        .dateJoined(date)
+                        .lastLogin(date)
+                        .isActive(true)
+                        .role(findLowestPriority())
+                        .build();
+                userRepository.save(user);
+                var jwtToken = jwtService.generateToken(user);
+                creageLog("INSERT","The user was created successfully.", user.getEmail());
+                return AuthenticationResponse.builder()
+                        .token(jwtToken)
+                        .build();
+            }else {
+                registerUser = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow();
+                if(registerUser.getRole().getPriority() > role.getPriority()){
+                    var user = User.builder()
+                            .id(findTotalUser()+1)
+                            .firstname(request.getFirstname())
+                            .lastname(request.getLastname())
+                            .email(request.getEmail())
+                            .password(passwordEncoder.encode(request.getPassword()))
+                            .dateJoined(date)
+                            .lastLogin(date)
+                            .isActive(true)
+                            .role(role)
+                            .build();
+                    userRepository.save(user);
+                    var jwtToken = jwtService.generateToken(user);
+                    creageLog("INSERT","The user was created successfully.", user.getEmail());
+                    return AuthenticationResponse.builder()
+                            .token(jwtToken)
+                            .build();
+                }else if(registerUser.getRole().getPriority() < role.getPriority()){
+                    var user = User.builder()
+                            .id(findTotalUser()+1)
+                            .firstname(request.getFirstname())
+                            .lastname(request.getLastname())
+                            .email(request.getEmail())
+                            .password(passwordEncoder.encode(request.getPassword()))
+                            .dateJoined(date)
+                            .lastLogin(date)
+                            .isActive(true)
+                            .role(registerUser.getRole())
+                            .build();
+                    userRepository.save(user);
+                    var jwtToken = jwtService.generateToken(user);
+                    creageLog("INSERT","The user was created successfully.", user.getEmail());
+                    return AuthenticationResponse.builder()
+                            .token(jwtToken)
+                            .build();
+                }else if(registerUser.getRole().getPriority() == role.getPriority()){
+                    var user = User.builder()
+                            .id(findTotalUser()+1)
+                            .firstname(request.getFirstname())
+                            .lastname(request.getLastname())
+                            .email(request.getEmail())
+                            .password(passwordEncoder.encode(request.getPassword()))
+                            .dateJoined(date)
+                            .lastLogin(date)
+                            .isActive(true)
+                            .role(role)
+                            .build();
+                    userRepository.save(user);
+                    var jwtToken = jwtService.generateToken(user);
+                    creageLog("INSERT","The user was created successfully.", user.getEmail());
+                    return AuthenticationResponse.builder()
+                            .token(jwtToken)
+                            .build();
+                }
+                creageLog("INSERT","You don't have enough access.", request.getEmail());
+                return AuthenticationResponse.builder()
+                        .error("You don't have enough acess.")
+                        .build();
+            }
         } catch (DataIntegrityViolationException e){
             creageLog("INSERT","An error has occurred while trying to register the user, please try again.", request.getEmail());
             return AuthenticationResponse.builder()
@@ -125,79 +188,116 @@ public class AuthenticationService {
      * @return AuthenticationResponse
      */
     public AuthenticationResponse update(RegisterRequest request, Integer id){
-        /*try{
+        try{
             User newUser = new User();
             User oldUser = userRepository.findById(id).get();
-            User userID = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow();
+            User requestedUser = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow();
             Role role = roleRepository.findById(request.getRoleId()).get();
 
-            // Check for a User with Role USER
-            if(role == Role.USER && oldUser.getRole() == Role.USER && request.getRole() == Role.USER){
-                if(userID.getId() == id){
+            if(requestedUser.getRole().getPriority() > oldUser.getRole().getPriority()){
+                oldUser.setFirstname(request.getFirstname());
+                oldUser.setLastname(request.getLastname());
+                oldUser.setEmail(request.getEmail());
+                oldUser.setPassword(passwordEncoder.encode(request.getPassword()));
+                oldUser.setIsActive(request.getIsActive());
+                if((role.getPriority() >= oldUser.getRole().getPriority()) || (requestedUser.getRole().getPriority() >= role.getPriority())){
+                    oldUser.setRole(role);
+                }else{
+                    oldUser.setRole(requestedUser.getRole());
+                }
+                newUser = updateLastLogin(oldUser);
+                var jwtToken = jwtService.generateToken(newUser);
+                userRepository.save(newUser);
+                creageLogId("UPDATE", "User updated successfully.",requestedUser.getId());
+                return AuthenticationResponse.builder()
+                        .token(jwtToken)
+                        .build();
+            }else if(requestedUser.getRole().getPriority() == oldUser.getRole().getPriority()){
+                if((requestedUser.getId() == oldUser.getId()) && (findLowestPriority(role.getPriority())) ){
                     oldUser.setFirstname(request.getFirstname());
                     oldUser.setLastname(request.getLastname());
                     oldUser.setEmail(request.getEmail());
                     oldUser.setPassword(passwordEncoder.encode(request.getPassword()));
                     oldUser.setIsActive(request.getIsActive());
-                    oldUser.setRole(request.getRole());
-
+                    if((role.getPriority() <= oldUser.getRole().getPriority()) && (requestedUser.getRole().getPriority() >= role.getPriority())){
+                        oldUser.setRole(role);
+                    }else{
+                        oldUser.setRole(requestedUser.getRole());
+                    }
                     newUser = updateLastLogin(oldUser);
                     var jwtToken = jwtService.generateToken(newUser);
                     userRepository.save(newUser);
-                    creageLogId("UPDATE", "User updated successfully.",userID.getId());
+                    creageLogId("UPDATE", "User updated successfully.",requestedUser.getId());
+                    return AuthenticationResponse.builder()
+                            .token(jwtToken)
+                            .build();
+                }else if((requestedUser.getId() == oldUser.getId()) && !(findLowestPriority(role.getPriority()))){
+                    oldUser.setFirstname(request.getFirstname());
+                    oldUser.setLastname(request.getLastname());
+                    oldUser.setEmail(request.getEmail());
+                    oldUser.setPassword(passwordEncoder.encode(request.getPassword()));
+                    oldUser.setIsActive(request.getIsActive());
+                    if((role.getPriority() <= oldUser.getRole().getPriority()) && (requestedUser.getRole().getPriority() >= role.getPriority())){
+                        oldUser.setRole(role);
+                    }else{
+                        oldUser.setRole(requestedUser.getRole());
+                    }
+                    newUser = updateLastLogin(oldUser);
+                    var jwtToken = jwtService.generateToken(newUser);
+                    userRepository.save(newUser);
+                    creageLogId("UPDATE", "User updated successfully.",requestedUser.getId());
+                    return AuthenticationResponse.builder()
+                            .token(jwtToken)
+                            .build();
+                }else if(!(findLowestPriority(role.getPriority()))){
+                    oldUser.setFirstname(request.getFirstname());
+                    oldUser.setLastname(request.getLastname());
+                    oldUser.setEmail(request.getEmail());
+                    oldUser.setPassword(passwordEncoder.encode(request.getPassword()));
+                    oldUser.setIsActive(request.getIsActive());
+                    if((role.getPriority() <= oldUser.getRole().getPriority()) && (requestedUser.getRole().getPriority() >= role.getPriority())){
+                        oldUser.setRole(role);
+                    }else{
+                        oldUser.setRole(requestedUser.getRole());
+                    }
+                    newUser = updateLastLogin(oldUser);
+                    var jwtToken = jwtService.generateToken(newUser);
+                    userRepository.save(newUser);
+                    creageLogId("UPDATE", "User updated successfully.",requestedUser.getId());
+                    return AuthenticationResponse.builder()
+                            .token(jwtToken)
+                            .build();
+                }else if((requestedUser.getId() != oldUser.getId())&&!(findLowestPriority(role.getPriority()))){
+                    oldUser.setFirstname(request.getFirstname());
+                    oldUser.setLastname(request.getLastname());
+                    oldUser.setEmail(request.getEmail());
+                    oldUser.setPassword(passwordEncoder.encode(request.getPassword()));
+                    oldUser.setIsActive(request.getIsActive());
+                    if((role.getPriority() >= oldUser.getRole().getPriority()) || (requestedUser.getRole().getPriority() >= role.getPriority())){
+                        oldUser.setRole(role);
+                    }else{
+                        oldUser.setRole(requestedUser.getRole());
+                    }
+                    newUser = updateLastLogin(oldUser);
+                    var jwtToken = jwtService.generateToken(newUser);
+                    userRepository.save(newUser);
+                    creageLogId("UPDATE", "User updated successfully.",requestedUser.getId());
                     return AuthenticationResponse.builder()
                             .token(jwtToken)
                             .build();
                 }
-                creageLogId("UPDATE", "User tried to update another account, please try with your account.",userID.getId());
+                creageLogId("UPDATE", "User tried to update another account, please try with your account.",requestedUser.getId());
                 return AuthenticationResponse.builder()
                         .error("User tried to update another account, please try with your account.").build();
             }
-
-            // Check for a User with Role MODERATOR
-            if(role == Role.MODERATOR && (oldUser.getRole() == Role.MODERATOR || oldUser.getRole() == Role.USER) && (request.getRole() != Role.ADMIN)){
-                oldUser.setFirstname(request.getFirstname());
-                oldUser.setLastname(request.getLastname());
-                oldUser.setEmail(request.getEmail());
-                oldUser.setPassword(passwordEncoder.encode(request.getPassword()));
-                oldUser.setIsActive(request.getIsActive());
-                oldUser.setRole(request.getRole());
-
-                newUser = updateLastLogin(oldUser);
-                var jwtToken = jwtService.generateToken(newUser);
-                userRepository.save(newUser);
-                creageLogId("UPDATE", "User updated successfully.",userID.getId());
-                return AuthenticationResponse.builder()
-                        .token(jwtToken)
-                        .build();
-            }
-
-            // Check for a User with Role ADMIN
-            if (role == Role.ADMIN &&(oldUser.getRole() == Role.ADMIN || oldUser.getRole() == Role.MODERATOR || oldUser.getRole() == Role.USER)){
-                oldUser.setFirstname(request.getFirstname());
-                oldUser.setLastname(request.getLastname());
-                oldUser.setEmail(request.getEmail());
-                oldUser.setPassword(passwordEncoder.encode(request.getPassword()));
-                oldUser.setIsActive(request.getIsActive());
-                oldUser.setRole(request.getRole());
-
-                newUser = updateLastLogin(oldUser);
-                var jwtToken = jwtService.generateToken(newUser);
-                userRepository.save(newUser);
-                creageLogId("UPDATE", "User updated successfully.",userID.getId());
-                return AuthenticationResponse.builder()
-                        .token(jwtToken)
-                        .build();
-            }
-            creageLogId("UPDATE", "You don't have enough access to do this action",userID.getId());
+            creageLogId("UPDATE", "You don't have enough access to do this action",requestedUser.getId());
             return AuthenticationResponse.builder()
                     .error("You don't have enough access to do this action.").build();
-        }catch (Exception e){
+}catch (Exception e){
             creageLog("UPDATE", "Something when wrong while updating",SecurityContextHolder.getContext().getAuthentication().getName());
             return AuthenticationResponse.builder()
                     .error("Something when wrong while updating").build();
-        }*/
-        return null;
+        }
     }
 
     /**
@@ -206,30 +306,20 @@ public class AuthenticationService {
      * @return AuthenticationResponse
      */
     public AuthenticationResponse delete(Integer id){
-        /*try{
-            User deletedUser;
+        try{
+            User deletedUser = userRepository.findById(id).get();
+            User tokenUser = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).get();
 
-            User userQuery = userRepository.findById(id).get();
-            if(role == Role.MODERATOR && (userQuery.getRole() == Role.MODERATOR
-                    || userQuery.getRole() == Role.USER)) {
-
-                userQuery.setIsActive(false);
-
-                deletedUser = updateLastLogin(userQuery);
-
+            if(tokenUser.getRole().getPriority() > deletedUser.getRole().getPriority()){
+                deletedUser.setIsActive(false);
                 userRepository.save(deletedUser);
-                creageLog("DELETE", "Successfully deleted.",SecurityContextHolder.getContext().getAuthentication().getName());
+                creageLog("DELETE", "Successfully deleted.",tokenUser.getUsername());
                 return AuthenticationResponse.builder().build();
-            }else  if (role == Role.ADMIN &&(userQuery.getRole() == Role.ADMIN
-                        || userQuery.getRole() == Role.MODERATOR
-                        || userQuery.getRole() == Role.USER)) {
-                userQuery.setIsActive(false);
-
-                deletedUser = updateLastLogin(userQuery);
-
-                userRepository.save(deletedUser);
-                creageLog("DELETE", "Successfully deleted.",SecurityContextHolder.getContext().getAuthentication().getName());
-                return AuthenticationResponse.builder().build();
+            }else if(tokenUser.getRole().getPriority() == deletedUser.getRole().getPriority()){
+                    deletedUser.setIsActive(false);
+                    userRepository.save(deletedUser);
+                    creageLog("DELETE", "Successfully deleted.",tokenUser.getUsername());
+                    return AuthenticationResponse.builder().build();
             }
             creageLog("DELETE", "You don't have enough access to do this action.",SecurityContextHolder.getContext().getAuthentication().getName());
             return AuthenticationResponse.builder()
@@ -238,8 +328,7 @@ public class AuthenticationService {
             creageLog("DELETE", "Something when wrong while deleting.",SecurityContextHolder.getContext().getAuthentication().getName());
             return AuthenticationResponse.builder()
                  .error("Something when wrong while deleting.").build();
-        }*/
-        return null;
+        }
     }
 
     /**
@@ -277,6 +366,18 @@ public class AuthenticationService {
         }
     }
 
+    public String recoverPassword(PasswordRequest request){
+        try {
+            User user = userRepository.findByEmail(request.getEmail()).orElseThrow();
+            return user.getPassword();
+        }catch (NoSuchElementException e){
+            creageLog("PASSWORDRECOVERY","An error has ocurred while trying to recover a password from an non existing email, please try again.", request.getEmail());
+            AuthenticationResponse.builder()
+                    .error("An error has ocurred while trying to recover a password from an non existing email, please try again.").build();
+            return "";
+        }
+    }
+
     /**
      * Updates the User's lastLogin attribute to match the current date.
      * @param user User
@@ -309,5 +410,53 @@ public class AuthenticationService {
         adminLog.setMessage(message);
         adminLog.setUser(user);
         logRepository.save(adminLog);
+    }
+
+    private boolean findLowestPriority(Integer priority){
+        List<Role> roles = roleRepository.findAll();
+        int max = 0;
+        for (int i = 0; i < roles.size(); i++){
+            if(roles.get(i).getPriority() > max){
+                max = roles.get(i).getPriority();
+            }
+        }
+        int min = max;
+        for (int i = 0; i < roles.size(); i++){
+            if(roles.get(i).getPriority() < min){
+                min = roles.get(i).getPriority();
+            }
+        }
+
+        if(min == priority){
+            return true;
+        }else {
+            return false;
+        }
+    }
+
+    private Role findLowestPriority(){
+        List<Role> roles = roleRepository.findAll();
+        int max = 0;
+        for (int i = 0; i < roles.size(); i++){
+            if(roles.get(i).getPriority() > max){
+                max = roles.get(i).getPriority();
+            }
+        }
+        int min = max;
+        for (int i = 0; i < roles.size(); i++){
+            if(roles.get(i).getPriority() < min){
+                min = roles.get(i).getPriority();
+            }
+        }
+
+        return roleService.getByPriority(min);
+    }
+
+    private int findTotalUser(){
+        List<User> users = userRepository.findAll();
+        if(users.isEmpty()){
+            return 0;
+        }
+        return users.size();
     }
 }
