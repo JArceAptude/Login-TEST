@@ -21,6 +21,11 @@ public class PermissionService {
     @Autowired
     private final PermissionRepository permissionRepository;
 
+    /***
+     * Saves to the database the Permission.
+     * @param request
+     * @return
+     */
     public Permission save(PermissionRequest request){
 
         var permission = Permission.builder()
@@ -33,6 +38,11 @@ public class PermissionService {
         return permissionRepository.save(permission);
     }
 
+    /***
+     * Reads from the database all Permissions
+     * @return
+     */
+
     public List<Permission> getAll(){
 
         val a = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -40,6 +50,11 @@ public class PermissionService {
         return permissionRepository.findAll();
     }
 
+    /***
+     * Reads from the database a specific permission searching by its id.
+     * @param id
+     * @return
+     */
     public ResponseObject getById(Integer id){
         try{
             return new ResponseObject(Optional.of(permissionRepository.findById(id).get()), "") ;
@@ -48,10 +63,19 @@ public class PermissionService {
         }
     }
 
+    /***
+     * Updates a permission by its id.
+     * @param permission
+     * @return
+     */
     public Permission update(Permission permission){
         return permissionRepository.save(permission);
     }
 
+    /***
+     * Deletes a permission by its id.
+     * @param id
+     */
     public void delete(Integer id){
         permissionRepository.deleteById(id);
     }

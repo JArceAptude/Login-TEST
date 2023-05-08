@@ -9,6 +9,11 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+/***
+ * This entity as a model for the database
+ * This is the permission's class.
+ * Is used to give user specific permissions for the different CRUDs
+ */
 @Data
 @Builder
 @NoArgsConstructor

@@ -22,6 +22,9 @@ public class SecurityConfiguration {
     private final AuthenticationProvider authenticationProvider;
 
     /**
+     * Used to define which endpoints of the application are enabled for a defined type of user.
+     * permitAll() is for everyone, no need to be authenticated.
+     * authenticated() is for users with any type of authentication.
      *
      * @param http
      * @return

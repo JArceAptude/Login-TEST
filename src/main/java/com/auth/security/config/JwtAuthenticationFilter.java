@@ -18,15 +18,6 @@ import java.io.IOException;
 
 /**
  * Intercepts the HTTP request and filters.
- * <br><br>
- *
- * Dependencies Injected:
- * <ul>
- *     <li>JwtService</li>
- *     <li>UserDetailsService</li>
- * </ul>
- *
- *
  *
  * @see RequiredArgsConstructor
  * @see OncePerRequestFilter

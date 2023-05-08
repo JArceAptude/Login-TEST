@@ -14,6 +14,19 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/***
+ * This entity as a model for the database.
+ * This is a class used to define the role of a user.
+ * Users can have one role, and one role can have multiple permissions.
+ * With this a user can access CRUD permissions for some tables in the database.
+ *
+ *     private Integer id
+ *     private String name
+ *     private String description
+ *     private Integer priority
+ *     private List<Permission> rolePermissions
+ *
+ */
 @Data
 @Builder
 @NoArgsConstructor
@@ -25,7 +38,6 @@ public class Role {
     private Integer id;
     private String name;
     private String description;
-
     private Integer priority;
 
     @ManyToMany(cascade=CascadeType.ALL, fetch = FetchType.EAGER)

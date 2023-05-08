@@ -66,7 +66,6 @@ public class AuthenticationController {
     /**
      * Endpoint for Users to delete another User
      * @param id Id of the User to Delete
-     * @param role Role of the current User
      * @return ResponseEntity
      */
     @DeleteMapping("/delete/{id}")

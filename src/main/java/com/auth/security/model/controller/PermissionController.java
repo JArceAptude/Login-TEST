@@ -21,20 +21,36 @@ public class PermissionController {
     @Autowired
     private final PermissionService permissionService;
 
+    /***
+     * Endpoint for the creation of new permissions in which you can create a permission and assign
+     * to a role.
+     * @param request
+     * @return
+     */
+
     @PostMapping("/new")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Permission> newPermission(@RequestBody PermissionRequest request){
         return ResponseEntity.ok(permissionService.save(request));
     }
 
+    /***
+     * Endpoint to read a specific permission by its id.
+     * @param id
+     * @return
+     */
     @GetMapping("/read/{id}")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<ResponseObject> getPermissionById(@RequestParam Integer id){
         return ResponseEntity.ok((permissionService.getById(id)));
     }
 
+    /***
+     * Endpoint for reading all permissions.
+     * @return
+     */
+
     @GetMapping("/read/all")
-    @PreAuthorize("hasAuthority('edit_all_users')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<List<Permission>> getAllPermissions(){
         return ResponseEntity.ok(permissionService.getAll());
