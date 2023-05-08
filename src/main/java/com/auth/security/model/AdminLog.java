@@ -8,6 +8,10 @@ import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
+/***
+ * This entity as a model for the database
+ * Is used to log any data required by the developer.
+ */
 @Data
 @Builder
 @NoArgsConstructor

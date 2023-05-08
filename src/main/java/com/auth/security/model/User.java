@@ -14,6 +14,20 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+/***
+ * This entity as a model for the database
+ *
+ *     private Integer id;
+ *     private String firstname;
+ *     private String lastname;
+ *     private String email;
+ *     private String password;
+ *     private Date lastLogin;
+ *     private Date dateJoined;
+ *     private Boolean isActive;
+ *     private Role role;
+ *
+ */
 @Data
 @Builder
 @NoArgsConstructor
