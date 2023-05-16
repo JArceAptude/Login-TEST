@@ -22,61 +22,127 @@ Classes:
 
     - authentication
         - AuthenticationController.java
-            Description: WIP
-            Attributes: WIP
-            Methods: WIP
+            Description: It contain all the endpoints for the api.
+            Attributes:
+                - authService
+            Methods:
+                - register
+                - authenticate
+                - userUpdate
+                - delete
+                - refreshToken
+                - recoverPassword
 
         - AuthenticationRequest.java
-            Description: WIP
-            Attributes: WIP
-            Methods: WIP
+            Description: Create a request template for authenticate endpoint.
+            Attributes:
+                - email
+                - password
+            Methods: -
 
         - AuthenticationResponse.java
-            Description: WIP
-            Attributes: WIP
-            Methods: WIP
+            Description: Create an output from the endpoints.
+            Attributes:
+                - token
+                - error
+                - refreshToken
+            Methods: -
+
+        - PasswordRequest.java
+            Description: Create a request for recoverPassword endpoint.
+            Attributes:
+                - email
+            Methods: -
 
         - AuthenticationService.java
-            Description: WIP
-            Attributes: WIP
-            Methods: WIP
+            Description: It contain all the logic for the endpoints.
+            Attributes:
+                - userRepository
+                - passwordEncoder
+                - jwtService
+                - authenticationManager
+                - logRepository
+                - roleRepository
+                - roleService
+                - adminLog
+            Methods:
+                - register
+                - authenticate
+                - userUpdate
+                - delete
+                - refreshToken
+                - recoverPassword
 
         - RegisterRequest.java
-            Description: WIP
-            Attributes: WIP
-            Methods: WIP
+            Description: It create a request for create/update user.
+            Attributes:
+                - firstname
+                - lastname
+                - email
+                - password
+                - isActive
+                - role
+            Methods: -
 
     - config
         - swaggerConfig
             - Info.java
-                Description: WIP
-                Attributes: WIP
-                Methods: WIP
+                Description: It's a service that extends from the super swagger class.
+                Attributes: -
+                Methods: -
 
             - SpringdocConfig.java
-                Description: WIP
-                Attributes: WIP
-                Methods: WIP
+                Description: Create the bean to work with swagger and our api.
+                Attributes: -
+                Methods:
+                    - baseOpenAPI
 
         - ApplicationConfig.java
-            Description: WIP
-            Attributes: WIP
-            Methods: WIP
+            Description: Create the logic behind user credential, encrypting
+            and managing of the authentication.
+            Attributes:
+                - userRepository
+            Methods:
+                - userDetailsService
+                - authenticationProvider
+                - authenticationManager
+                - passwordEncoder
 
         - JwtAuthenticationFilter.java
-            Description: WIP
-            Attributes: WIP
-            Methods: WIP
+            Description: Create the token and valid if the token is valid when you are trying
+            to reach another endpoint.
+            Attributes:
+                - jwtService
+                - userDetailsService
+            Methods:
+                - doFilterInternal
 
         - JwtService.java
-            Description: WIP
-            Attributes: WIP
-            Methods: WIP
+            Description: Create the token and refreshToken, also validate
+            that this token is not expired working simultaneous with JWTAuthenticateFilter.Java
+            Attributes:
+                - SECRET_KEY
+                - expiration
+                - expirationRefreshToken
+            Methods:
+                - extractUsername
+                - extractClaims
+                - generateToken
+                - generateToken
+                - generateTokenRefreshToken
+                - generateTokenRefreshToken
+                - isTokenValid
+                - isTokenExpired
+                - extractExpiration
+                - extractAllClaims
+                - getSigninKey
 
         - SecurityConfiguration.java
-            Description: WIP
-            Attributes: WIP
-            Methods: WIP
+            Description: Filter user with credentials or not for certain endpoints.
+            Attributes:
+                - jwtAuthenticationFilter
+                - authenticationProvider
+            Methods: securityFilterChain
 
     - model
         - User.java
@@ -105,6 +171,15 @@ Classes:
 
         - Role.java
             Description: ENUM List of Roles
+            Attributes:
+                - id
+                    Unique, autogenerated Id for the user.
+                - name
+                    Name for the role
+                - description
+                    Description for the role
+                - priority
+                    Priority set for all the user.
 
         - UserRepository.java
             Description: Repository for User related database actions.
@@ -114,8 +189,15 @@ Classes:
 
         - Permission.java
             Description: WIP
-            Attributes: WIP
-            Methods: WIP
+            Attributes:
+                - id
+                   Unique, autogenerated Id for the user.
+                - Name
+                   Name for the permission
+                - Description
+                   Description for the permission
+                - roles
+                   Join permissions with roles
 
     - demo
         - DemoController.java
