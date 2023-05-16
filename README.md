@@ -1,265 +1,266 @@
-JWT Authentication and Authorisation
-Authentication and Authorization module
+# JWT Authentication and Authorisation
+# Authentication and Authorization module
 
-Spring Version: 3.0.1
+**Spring Version: 3.0.1**
 
-Java Version: 17
+**Java Version: 17**
 
-Dependencies:
-    - spring-boot-starter-data-jpa
-    - spring-boot-starter-security
-    - spring-boot-starter-web
-    - spring-boot-starter-test
-    - spring-security-test
-    - lombok
-    - jjwt-api (0.11.5)
-    - jjwt-impl (0.11.5)
-    - jjwt-jackson (0.11.5)
-    - springdoc-openapi-starter-webmvc-ui (2.0.2)
-    - hibernate-validator (8.0.0.Final)
+# Dependencies:
+- spring-boot-starter-data-jpa
+- spring-boot-starter-security
+- spring-boot-starter-web
+- spring-boot-starter-test
+- spring-security-test
+- lombok
+- jjwt-api (0.11.5)
+- jjwt-impl (0.11.5)
+- jjwt-jackson (0.11.5)
+- springdoc-openapi-starter-webmvc-ui (2.0.2)
+- hibernate-validator (8.0.0.Final)
 
-Classes:
+# Classes:
 
-    - authentication
-        - AuthenticationController.java
-            Description: It contain all the endpoints for the api.
-            Attributes:
-                - authService
-            Methods:
-                - register
-                - authenticate
-                - userUpdate
-                - delete
-                - refreshToken
-                - recoverPassword
+## 1. authentication
+   - AuthenticationController.java
+     - Description: It contain all the endpoints for the api.
+     - Attributes:
+       - authService
+     - Methods:
+       - register
+       - authenticate
+       - userUpdate
+       - delete
+       - refreshToken
+       - recoverPassword
 
-        - AuthenticationRequest.java
-            Description: Create a request template for authenticate endpoint.
-            Attributes:
-                - email
-                - password
-            Methods: -
+   - AuthenticationRequest.java
+     - Description: Create a request template for authenticate endpoint.
+     - Attributes:
+       - email
+       - password
+  
 
-        - AuthenticationResponse.java
-            Description: Create an output from the endpoints.
-            Attributes:
-                - token
-                - error
-                - refreshToken
-            Methods: -
+- AuthenticationResponse.java
+  - Description: Create an output from the endpoints.
+  - Attributes:
+    - token
+    - error
+    - refreshToken
 
-        - PasswordRequest.java
-            Description: Create a request for recoverPassword endpoint.
-            Attributes:
-                - email
-            Methods: -
+  - PasswordRequest.java
+    - Description: Create a request for recoverPassword endpoint.
+    - Attributes:
+      - email  
 
-        - AuthenticationService.java
-            Description: It contain all the logic for the endpoints.
-            Attributes:
-                - userRepository
-                - passwordEncoder
-                - jwtService
-                - authenticationManager
-                - logRepository
-                - roleRepository
-                - roleService
-                - adminLog
-            Methods:
-                - register
-                - authenticate
-                - userUpdate
-                - delete
-                - refreshToken
-                - recoverPassword
+  - AuthenticationService.java
+    - Description: It contain all the logic for the endpoints.
+    - Attributes:
+      - userRepository
+      - passwordEncoder
+      - jwtService
+      - authenticationManager
+      - logRepository
+      - roleRepository
+      - roleService
+      - adminLog
+    - Methods:
+      - register
+      - authenticate
+      - userUpdate
+      - delete
+      - refreshToken
+      - recoverPassword
 
-        - RegisterRequest.java
-            Description: It create a request for create/update user.
-            Attributes:
-                - firstname
-                - lastname
-                - email
-                - password
-                - isActive
-                - role
-            Methods: -
+  - RegisterRequest.java
+    - Description: It create a request for create/update user.
+    - Attributes:
+      - firstname
+      - lastname
+      - email
+      - password
+      - isActive
+      - role
 
-    - config
-        - swaggerConfig
-            - Info.java
-                Description: It's a service that extends from the super swagger class.
-                Attributes: -
-                Methods: -
+## 2. config
+   - swaggerConfig
+       - Info.java
+           - Description: It's a service that extends from the super swagger class.
+           - Attributes: -
+           - Methods: -
 
-            - SpringdocConfig.java
-                Description: Create the bean to work with swagger and our api.
-                Attributes: -
-                Methods:
-                    - baseOpenAPI
+       - SpringdocConfig.java
+           - Description: Create the bean to work with swagger and our api.
+           - Attributes: -
+           - Methods:
+             - baseOpenAPI
 
-        - ApplicationConfig.java
-            Description: Create the logic behind user credential, encrypting
-            and managing of the authentication.
-            Attributes:
-                - userRepository
-            Methods:
-                - userDetailsService
-                - authenticationProvider
-                - authenticationManager
-                - passwordEncoder
+   - ApplicationConfig.java
+       - Description: Create the logic behind user credential, encrypting
+       and managing of the authentication.
+       - Attributes:
+         - userRepository
+       - Methods:
+         - userDetailsService
+         - authenticationProvider
+         - authenticationManager
+         - passwordEncoder
 
-        - JwtAuthenticationFilter.java
-            Description: Create the token and valid if the token is valid when you are trying
-            to reach another endpoint.
-            Attributes:
-                - jwtService
-                - userDetailsService
-            Methods:
-                - doFilterInternal
+   - JwtAuthenticationFilter.java
+     - Description: Create the token and valid if the token is valid when you are trying
+     to reach another endpoint.
+     - Attributes:
+       - jwtService
+       - userDetailsService
+     - Methods:
+       - doFilterInternal
 
-        - JwtService.java
-            Description: Create the token and refreshToken, also validate
-            that this token is not expired working simultaneous with JWTAuthenticateFilter.Java
-            Attributes:
-                - SECRET_KEY
-                - expiration
-                - expirationRefreshToken
-            Methods:
-                - extractUsername
-                - extractClaims
-                - generateToken
-                - generateToken
-                - generateTokenRefreshToken
-                - generateTokenRefreshToken
-                - isTokenValid
-                - isTokenExpired
-                - extractExpiration
-                - extractAllClaims
-                - getSigninKey
+   - JwtService.java
+       - Description: Create the token and refreshToken, also validate
+       that this token is not expired working simultaneous with JWTAuthenticateFilter.Java
+       - Attributes:
+         - SECRET_KEY
+         - expiration
+         - expirationRefreshToken
+       - Methods:
+         - extractUsername
+         - extractClaims
+         - generateToken
+         - generateToken
+         - generateTokenRefreshToken
+         - generateTokenRefreshToken
+         - isTokenValid
+         - isTokenExpired
+         - extractExpiration
+         - extractAllClaims
+         - getSigninKey
 
-        - SecurityConfiguration.java
-            Description: Filter user with credentials or not for certain endpoints.
-            Attributes:
-                - jwtAuthenticationFilter
-                - authenticationProvider
-            Methods: securityFilterChain
+   - SecurityConfiguration.java
+     - Description: Filter user with credentials or not for certain endpoints.
+     - Attributes:
+       - jwtAuthenticationFilter
+       - authenticationProvider
+     - Methods: 
+       - securityFilterChain
 
-    - model
-        - User.java
-            Description: Entity class for the users.
-            Attributes:
-                - Integer id:
-                    Unique, autogenerated Id for the user.
-                - String firstname:
-                    User's first name.
-                - String lastname:
-                    User's lastname
-                - String email:
-                    User's email.
-                - String password:
-                    User's password.
-                - Date lastLogin:
-                    User's last login date.
-                - Date dateJoined:
-                    User's joined date.
-                - Boolean isActive:
-                    User's flag to define if it is an active user or not.
-                - Role role:
-                    User's role.
-                - List<Permission> permissions:
-                    User's permissions WIP.
+## 3. model
 
-        - Role.java
-            Description: ENUM List of Roles
-            Attributes:
-                - id
-                    Unique, autogenerated Id for the user.
-                - name
-                    Name for the role
-                - description
-                    Description for the role
-                - priority
-                    Priority set for all the user.
+  - User.java
+    - Description: 
+      - Entity class for the users.
+    - Attributes:
+      - Integer id:
+          - Unique, autogenerated Id for the user.
+      - String firstname:
+          - User's first name.
+      - String lastname:
+          - User's lastname
+      - String email:
+          - User's email.
+      - String password:
+          - User's password.
+      - Date lastLogin:
+          - User's last login date.
+      - Date dateJoined:
+          - User's joined date.
+      - Boolean isActive:
+          - User's flag to define if it is an active user or not.
+      - Role role:
+          - User's role.
+      - List<Permission> permissions:
+          - User's permissions WIP.
 
-        - UserRepository.java
-            Description: Repository for User related database actions.
-            Methods:
-                - Optional<User> findByEmail(String email):
-                    Returns user using email as filter.
+    - Role.java
+        - Description: ENUM List of Roles
+        - Attributes:
+            - id: 
+              - Unique, autogenerated Id for the user.
+            - name:
+              - Name for the role
+            - description:
+              - Description for the role
+            - priority:
+              - Priority set for all the user.
 
-        - Permission.java
-            Description: WIP
-            Attributes:
-                - id
-                   Unique, autogenerated Id for the user.
-                - Name
-                   Name for the permission
-                - Description
-                   Description for the permission
-                - roles
-                   Join permissions with roles
+  - UserRepository.java
+      - Description: Repository for User related database actions.
+      - Methods:
+          - findByEmail:
+            - Returns user using email as filter.
 
-    - demo
-        - DemoController.java
+  - Permission.java
+    - Description: List of permissions that can be assigned to roles.
+      - Attributes:
+        - id
+          - Unique, autogenerated Id for the permission.
+        - Name
+          - Name for the permission
+        - Description
+          - Description for the permission
+        - roles
+          - Join permissions with roles
 
-Annotation Glossary
+## 4. demo
+  - DemoController.java
 
-    - @AllArgsConstructor:
-        Lombok annotation: Generates an all-args constructor. An all-args constructor requires one argument for every
-                           field in the class.
+# Annotation Glossary
 
-    - @ApiResponse
-        Swagger annotation: Used at method level or as field of Operation to define one or more responses of the
-                            Operation.
+- @AllArgsConstructor:
+  - Lombok annotation: 
+    - Generates an all-args constructor. An all-args constructor requires one argument for every
+      field in the class.
 
-    - @ApiResponses
-        Swagger annotation: Container for repeatable ApiResponse annotation
+- @ApiResponse:
+  - Swagger annotation: 
+    - Used at method level or as field of Operation to define one or more responses of the Operation.
 
-    - @Builder
-        Lombok annotation: The builder annotation creates a so-called 'builder' aspect to the class that is annotated
-                           or the class that contains a member which is annotated with @Builder.
+- @ApiResponses:
+    - Swagger annotation: 
+      - Container for repeatable ApiResponse annotation
 
-                           If a member is annotated, it must be either a constructor or a method.
+- @Builder:
+  - Lombok annotation: 
+    - The builder annotation creates a so-called 'builder' aspect to the class that is annotated or the class that contains a member which is annotated with @Builder.
+    If a member is annotated, it must be either a constructor or a method.\
+    If a class is annotated, then a package-private constructor is generated with all fields as 
+    arguments (as if @AllArgsConstructor(access = AccessLevel.PACKAGE) is present on the class), 
+    and it is as if this constructor has been annotated with @Builder instead.\
+    Note that this constructor is only generated if you haven't written any constructors and also 
+    haven't added any explicit @XArgsConstructor annotations. In those cases, lombok will assume 
+    an all-args constructor is present and generate code that uses it; this means you'd get a 
+    compiler error if this constructor is not present.\
+    The effect of @Builder is that an inner class is generated named TBuilder,
+    with a private constructor.
+    Instances of TBuilder are made with the method named builder() which is also generated for
+    you in the class itself (not in the builder class).\
+    The TBuilder class contains 1 method for each parameter of the annotated constructor / method
+    (each field, when annotating a class), which returns the builder itself. The builder also has
+    a build() method which returns a completed instance of the original type, created by passing
+    all parameters as set via the various other methods in the builder to the constructor or
+    method that was annotated with @Builder. The return type of this method will be the same as
+    the relevant class, unless a method has been annotated, in which case it'll be equal to the
+    return type of that method.
 
-                           If a class is annotated, then a package-private constructor is generated with all fields as
-                           arguments (as if @AllArgsConstructor(access = AccessLevel.PACKAGE) is present on the class),
-                           and it is as if this constructor has been annotated with @Builder instead.
+- @Data:
+  - Lombok annotation: 
+  Generates getters for all fields, a useful toString method, and hashCode and equals
+  implementations that check all non-transient fields. Will also generate setters for all
+  non-final fields, as well as a constructor. \
+  Equivalent to @Getter @Setter @RequiredArgsConstructor @ToString @EqualsAndHashCode.
 
-                           Note that this constructor is only generated if you haven't written any constructors and also
-                           haven't added any explicit @XArgsConstructor annotations. In those cases, lombok will assume
-                           an all-args constructor is present and generate code that uses it; this means you'd get a
-                           compiler error if this constructor is not present.
+- @NoArgsConstructor:
+  - Lombok annotation: 
+    - Generates a no-args constructor. Will generate an error message if such a constructor cannot
+      be written due to the existence of final fields.
 
-                           The effect of @Builder is that an inner class is generated named TBuilder,
-                           with a private constructor.
+- @PreAuthorize:
 
-                           Instances of TBuilder are made with the method named builder() which is also generated for
-                           you in the class itself (not in the builder class).
+- @RequiredArgsConstructor:
+  - Lombok annotation: 
+    - Generates a constructor with required arguments. Required arguments are final fields and
+      fields with constraints such as @NonNull.
 
-                           The TBuilder class contains 1 method for each parameter of the annotated constructor / method
-                           (each field, when annotating a class), which returns the builder itself. The builder also has
-                           a build() method which returns a completed instance of the original type, created by passing
-                           all parameters as set via the various other methods in the builder to the constructor or
-                           method that was annotated with @Builder. The return type of this method will be the same as
-                           the relevant class, unless a method has been annotated, in which case it'll be equal to the
-                           return type of that method.
-
-    - @Data
-        Lombok annotation: Generates getters for all fields, a useful toString method, and hashCode and equals
-                           implementations that check all non-transient fields. Will also generate setters for all
-                           non-final fields, as well as a constructor.
-                           Equivalent to @Getter @Setter @RequiredArgsConstructor @ToString @EqualsAndHashCode.
-
-    - @NoArgsConstructor
-        Lombok annotation: Generates a no-args constructor. Will generate an error message if such a constructor cannot
-                           be written due to the existence of final fields.
-
-    - @PreAuthorize
-    - @RequiredArgsConstructor:
-        Lombok annotation: Generates a constructor with required arguments. Required arguments are final fields and
-                           fields with constraints such as @NonNull.
-
-    - @SecurityRequirement
-        Swagger annotation: The annotation may be applied at class or method level, or in Operation.security() to define
-                            security requirements for the single operation (when applied at method level) or for all
-                            operations of a class (when applied at class level).
+- @SecurityRequirement:
+  - Swagger annotation: 
+    - The annotation may be applied at class or method level, or in Operation.security() to define
+      security requirements for the single operation (when applied at method level) or for all
+      operations of a class (when applied at class level).
