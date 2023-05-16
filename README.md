@@ -1,124 +1,206 @@
-# JWT Authentication and Authorisation
-# Authentication and Authorization module
+JWT Authentication and Authorisation
+Authentication and Authorization module
 
 Spring Version: 3.0.1
 
 Java Version: 17
 
 Dependencies:
-- spring-boot-starter-data-jpa
-- spring-boot-starter-security
-- spring-boot-starter-web
-- spring-boot-starter-test
-- spring-security-test
-- lombok
-- jjwt-api (0.11.5)
-- jjwt-impl (0.11.5)
-- jjwt-jackson (0.11.5)
-- springdoc-openapi-starter-webmvc-ui (2.0.2)
-- hibernate-validator (8.0.0.Final)
+    - spring-boot-starter-data-jpa
+    - spring-boot-starter-security
+    - spring-boot-starter-web
+    - spring-boot-starter-test
+    - spring-security-test
+    - lombok
+    - jjwt-api (0.11.5)
+    - jjwt-impl (0.11.5)
+    - jjwt-jackson (0.11.5)
+    - springdoc-openapi-starter-webmvc-ui (2.0.2)
+    - hibernate-validator (8.0.0.Final)
 
 Classes:
 
-- authentication
-    - AuthenticationController.java
-        Description: WIP
-        Attributes: WIP
-        Methods: WIP
+    - authentication
+        - AuthenticationController.java
+            Description: It contain all the endpoints for the api.
+            Attributes:
+                - authService
+            Methods:
+                - register
+                - authenticate
+                - userUpdate
+                - delete
+                - refreshToken
+                - recoverPassword
 
-    - AuthenticationRequest.java
-        Description: WIP
-        Attributes: WIP
-        Methods: WIP
+        - AuthenticationRequest.java
+            Description: Create a request template for authenticate endpoint.
+            Attributes:
+                - email
+                - password
+            Methods: -
 
-    - AuthenticationResponse.java
-        Description: WIP
-        Attributes: WIP
-        Methods: WIP
+        - AuthenticationResponse.java
+            Description: Create an output from the endpoints.
+            Attributes:
+                - token
+                - error
+                - refreshToken
+            Methods: -
 
-    - AuthenticationService.java
-        Description: WIP
-        Attributes: WIP
-        Methods: WIP
+        - PasswordRequest.java
+            Description: Create a request for recoverPassword endpoint.
+            Attributes:
+                - email
+            Methods: -
 
-    - RegisterRequest.java
-        Description: WIP
-        Attributes: WIP
-        Methods: WIP
+        - AuthenticationService.java
+            Description: It contain all the logic for the endpoints.
+            Attributes:
+                - userRepository
+                - passwordEncoder
+                - jwtService
+                - authenticationManager
+                - logRepository
+                - roleRepository
+                - roleService
+                - adminLog
+            Methods:
+                - register
+                - authenticate
+                - userUpdate
+                - delete
+                - refreshToken
+                - recoverPassword
 
-- config
-    - swaggerConfig
-        - Info.java
-            - Description: WIP
-            - Attributes: WIP
-            - Methods: WIP
-         
-        - SpringdocConfig.java
-            - Description: WIP
-            - Attributes: WIP
-            - Methods: WIP
+        - RegisterRequest.java
+            Description: It create a request for create/update user.
+            Attributes:
+                - firstname
+                - lastname
+                - email
+                - password
+                - isActive
+                - role
+            Methods: -
 
-    - ApplicationConfig.java
-        Description: WIP
-        Attributes: WIP
-        Methods: WIP
+    - config
+        - swaggerConfig
+            - Info.java
+                Description: It's a service that extends from the super swagger class.
+                Attributes: -
+                Methods: -
 
-    - JwtAuthenticationFilter.java
-        Description: WIP
-        Attributes: WIP
-        Methods: WIP
+            - SpringdocConfig.java
+                Description: Create the bean to work with swagger and our api.
+                Attributes: -
+                Methods:
+                    - baseOpenAPI
 
-    - JwtService.java
-        Description: WIP
-        Attributes: WIP
-        Methods: WIP
+        - ApplicationConfig.java
+            Description: Create the logic behind user credential, encrypting
+            and managing of the authentication.
+            Attributes:
+                - userRepository
+            Methods:
+                - userDetailsService
+                - authenticationProvider
+                - authenticationManager
+                - passwordEncoder
 
-    - SecurityConfiguration.java
-        Description: WIP
-        Attributes: WIP
-        Methods: WIP
+        - JwtAuthenticationFilter.java
+            Description: Create the token and valid if the token is valid when you are trying
+            to reach another endpoint.
+            Attributes:
+                - jwtService
+                - userDetailsService
+            Methods:
+                - doFilterInternal
 
-- model
-    - User.java
-        Description: Entity class for the users.
-        Attributes:
-            - Integer id:
-                Unique, autogenerated Id for the user.
-            - String firstname:
-                User's first name.
-            - String lastname:
-                User's lastname
-            - String email:
-                User's email.
-            - String password:
-                User's password.
-            - Date lastLogin:
-                User's last login date.
-            - Date dateJoined:
-                User's joined date.
-            - Boolean isActive:
-                User's flag to define if it is an active user or not.
-            - Role role:
-                User's role.
-            - List<Permission> permissions:
-                User's permissions WIP.
+        - JwtService.java
+            Description: Create the token and refreshToken, also validate
+            that this token is not expired working simultaneous with JWTAuthenticateFilter.Java
+            Attributes:
+                - SECRET_KEY
+                - expiration
+                - expirationRefreshToken
+            Methods:
+                - extractUsername
+                - extractClaims
+                - generateToken
+                - generateToken
+                - generateTokenRefreshToken
+                - generateTokenRefreshToken
+                - isTokenValid
+                - isTokenExpired
+                - extractExpiration
+                - extractAllClaims
+                - getSigninKey
 
-    - Role.java
-        Description: ENUM List of Roles
+        - SecurityConfiguration.java
+            Description: Filter user with credentials or not for certain endpoints.
+            Attributes:
+                - jwtAuthenticationFilter
+                - authenticationProvider
+            Methods: securityFilterChain
 
-    - UserRepository.java
-        Description: Repository for User related database actions.
-        Methods:
-            - Optional<User> findByEmail(String email):
-                Returns user using email as filter.
+    - model
+        - User.java
+            Description: Entity class for the users.
+            Attributes:
+                - Integer id:
+                    Unique, autogenerated Id for the user.
+                - String firstname:
+                    User's first name.
+                - String lastname:
+                    User's lastname
+                - String email:
+                    User's email.
+                - String password:
+                    User's password.
+                - Date lastLogin:
+                    User's last login date.
+                - Date dateJoined:
+                    User's joined date.
+                - Boolean isActive:
+                    User's flag to define if it is an active user or not.
+                - Role role:
+                    User's role.
+                - List<Permission> permissions:
+                    User's permissions WIP.
 
-    - Permission.java
-        Description: WIP
-        Attributes: WIP
-        Methods: WIP
+        - Role.java
+            Description: ENUM List of Roles
+            Attributes:
+                - id
+                    Unique, autogenerated Id for the user.
+                - name
+                    Name for the role
+                - description
+                    Description for the role
+                - priority
+                    Priority set for all the user.
 
-- demo
-    - DemoController.java
+        - UserRepository.java
+            Description: Repository for User related database actions.
+            Methods:
+                - Optional<User> findByEmail(String email):
+                    Returns user using email as filter.
+
+        - Permission.java
+            Description: WIP
+            Attributes:
+                - id
+                   Unique, autogenerated Id for the user.
+                - Name
+                   Name for the permission
+                - Description
+                   Description for the permission
+                - roles
+                   Join permissions with roles
+
+    - demo
+        - DemoController.java
 
 Annotation Glossary
 
