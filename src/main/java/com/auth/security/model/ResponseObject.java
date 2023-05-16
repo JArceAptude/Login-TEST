@@ -5,6 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/***
+ * Class used to send data as a response from request.
+ */
 @Data
 @Builder
 @AllArgsConstructor
