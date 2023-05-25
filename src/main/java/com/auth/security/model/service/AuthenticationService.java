@@ -1,9 +1,6 @@
 package com.auth.security.model.service;
 
-import com.auth.security.authentication.AuthenticationRequest;
-import com.auth.security.authentication.AuthenticationResponse;
-import com.auth.security.authentication.PasswordRequest;
-import com.auth.security.authentication.RegisterRequest;
+import com.auth.security.authentication.*;
 import com.auth.security.config.JwtService;
 import com.auth.security.model.*;
 import com.auth.security.model.repository.LogRepository;
@@ -13,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.mail.MailException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -34,7 +32,10 @@ public class AuthenticationService {
     private final LogRepository logRepository;
     private final RoleRepository roleRepository;
     private final RoleService roleService;
+
+    private final MailService mailService;
     private AdminLog  adminLog =  new AdminLog();
+    private int codeGenerated = 0;
 
     /**
      * Used to register users passing the RegisterRequest and Role of the user.
@@ -369,9 +370,36 @@ public class AuthenticationService {
     public String recoverPassword(PasswordRequest request){
         try {
             User user = userRepository.findByEmail(request.getEmail()).orElseThrow();
-            return user.getPassword();
+            int code = (int) (100000 + Math.random() * 900000);
+            codeGenerated = code;
+            mailService.sendEmail(user.getEmail(),code, "Password Recovery Code","Your code is:");
+            return "Your code has been sent.";
         }catch (NoSuchElementException e){
             creageLog("PASSWORDRECOVERY","An error has ocurred while trying to recover a password from an non existing email, please try again.", request.getEmail());
+            AuthenticationResponse.builder()
+                    .error("An error has ocurred while trying to recover a password from an non existing email, please try again.").build();
+            return "";
+        } catch (MailException mailException) {
+            creageLog("PASSWORDRECOVERY","An error has ocurred while trying to send the mail, please try again.", request.getEmail());
+            AuthenticationResponse.builder()
+                    .error("An error has ocurred while trying to send the mail, please try again.").build();
+            return "";
+        }
+    }
+
+    public String resetPassword(NewPasswordRequest request){
+
+        try{
+            if (codeGenerated == request.getCode()){
+                User user = userRepository.findByEmail(request.getEmail()).orElseThrow();
+                user.setPassword(request.getPassword());
+                userRepository.save(user);
+                codeGenerated = 0;
+                return "password successfully reset.";
+            }
+            return "Incorrect code, please try again.";
+        }catch (NoSuchElementException e){
+            creageLog("RESETPASSWORD","An error has ocurred while trying to reset the password, please try again.", request.getEmail());
             AuthenticationResponse.builder()
                     .error("An error has ocurred while trying to recover a password from an non existing email, please try again.").build();
             return "";

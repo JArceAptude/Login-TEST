@@ -1,10 +1,7 @@
 package com.auth.security.model.controller;
 
-import com.auth.security.authentication.AuthenticationRequest;
-import com.auth.security.authentication.AuthenticationResponse;
-import com.auth.security.authentication.PasswordRequest;
+import com.auth.security.authentication.*;
 import com.auth.security.model.service.AuthenticationService;
-import com.auth.security.authentication.RegisterRequest;
 import com.auth.security.model.Role;
 import com.auth.security.model.User;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -100,4 +97,9 @@ public class AuthenticationController {
     public String recoverPassword(PasswordRequest request){
         return authService.recoverPassword(request);
     }
+
+    @PostMapping("/resetPassword")
+    public String resetPassword(NewPasswordRequest request){
+        return authService.resetPassword(request);
+    };
 }
