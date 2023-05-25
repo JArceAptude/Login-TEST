@@ -55,4 +55,17 @@ public class PermissionController {
     public ResponseEntity<List<Permission>> getAllPermissions(){
         return ResponseEntity.ok(permissionService.getAll());
     }
+
+    /***
+     * Endpoint for updating a permission by id.
+     * @param id
+     * @param permission
+     * @return
+     */
+
+    @PutMapping("/update/{id}")
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<Permission> updatePermissionById(@RequestParam Integer id, @RequestBody PermissionRequest permission){
+        return ResponseEntity.ok(permissionService.updateById(id, permission));
+    }
 }

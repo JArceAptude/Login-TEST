@@ -54,4 +54,15 @@ public class RoleController {
         return ResponseEntity.ok(roleService.getById(id));
     }
 
+    /***
+     * Endpoint to update a role by Id.
+     * @param id
+     * @param role
+     * @return
+     */
+    @PutMapping("/update/{id}")
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<Role> updateRoleById(@RequestParam Integer id, @RequestBody RoleRequest role){
+        return ResponseEntity.ok(roleService.updateById(id, role));
+    }
 }

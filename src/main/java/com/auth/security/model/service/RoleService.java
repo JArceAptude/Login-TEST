@@ -1,5 +1,6 @@
 package com.auth.security.model.service;
 
+import com.auth.security.model.Permission;
 import com.auth.security.model.ResponseObject;
 import com.auth.security.model.Role;
 import com.auth.security.model.RoleRequest;
@@ -66,8 +67,10 @@ public class RoleService {
         }
     }
 
-    public Role update(Role permission){
-        return roleRepository.save(permission);
+    public Role updateById(Integer id, RoleRequest role){
+        List<Permission> permissionsList = permissionRepository.findAllById(role.getPermissionIds());
+        Role updatedRole = new Role(id, role.getName(), role.getDescription(), role.getPriority(), permissionsList);
+        return roleRepository.save(updatedRole);
     }
 
     public void delete(Integer id){

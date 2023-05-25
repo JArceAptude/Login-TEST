@@ -68,8 +68,9 @@ public class PermissionService {
      * @param permission
      * @return
      */
-    public Permission update(Permission permission){
-        return permissionRepository.save(permission);
+    public Permission updateById(Integer id, PermissionRequest permission){
+        Permission updatedPermission = new Permission(id, permission.getName(), permission.getDescription(), permission.getRoles());
+        return permissionRepository.save(updatedPermission);
     }
 
     /***
