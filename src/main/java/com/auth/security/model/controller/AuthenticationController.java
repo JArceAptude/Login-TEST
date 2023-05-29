@@ -3,10 +3,9 @@ package com.auth.security.model.controller;
 import com.auth.security.authentication.AuthenticationRequest;
 import com.auth.security.authentication.AuthenticationResponse;
 import com.auth.security.authentication.PasswordRequest;
+import com.auth.security.model.User;
 import com.auth.security.model.service.AuthenticationService;
 import com.auth.security.authentication.RegisterRequest;
-import com.auth.security.model.Role;
-import com.auth.security.model.User;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -80,6 +79,8 @@ public class AuthenticationController {
      * @return List User
      */
     @GetMapping("/getAll")
+    @PreAuthorize("hasAuthority('read_all_users')")
+    @SecurityRequirement(name = "Bearer Authentication")
     public List<User> getAll(){
         return authService.getUsers();
     }
@@ -89,7 +90,7 @@ public class AuthenticationController {
      * @return ResponseEntity
      */
     @GetMapping("/refreshToken")
-    @PreAuthorize("hasAuthority('USER') or hasAuthority('MODERATOR') or hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('refresh_token')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<AuthenticationResponse> refreshToken(){
         return ResponseEntity.ok(authService.refreshToken());

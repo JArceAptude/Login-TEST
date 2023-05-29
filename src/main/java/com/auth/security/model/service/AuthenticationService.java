@@ -5,19 +5,19 @@ import com.auth.security.authentication.AuthenticationResponse;
 import com.auth.security.authentication.PasswordRequest;
 import com.auth.security.authentication.RegisterRequest;
 import com.auth.security.config.JwtService;
-import com.auth.security.model.*;
+import com.auth.security.model.AdminLog;
+import com.auth.security.model.Role;
+import com.auth.security.model.User;
 import com.auth.security.model.repository.LogRepository;
 import com.auth.security.model.repository.RoleRepository;
 import com.auth.security.model.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +34,7 @@ public class AuthenticationService {
     private final LogRepository logRepository;
     private final RoleRepository roleRepository;
     private final RoleService roleService;
-    private AdminLog  adminLog =  new AdminLog();
+    private AdminLog adminLog =  new AdminLog();
 
     /**
      * Used to register users passing the RegisterRequest and Role of the user.

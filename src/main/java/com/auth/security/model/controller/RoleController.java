@@ -7,6 +7,7 @@ import com.auth.security.model.service.RoleService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,6 +28,7 @@ public class RoleController {
      * @return
      */
     @PostMapping("/new")
+    @PreAuthorize("hasAuthority('create_roles')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Role> saveRole(@RequestBody RoleRequest role){
         return ResponseEntity.ok(roleService.saveRole(role));
@@ -38,6 +40,7 @@ public class RoleController {
      * @return
      */
     @GetMapping("/all")
+    @PreAuthorize("hasAuthority('read_role')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<List<Role>> getAllRoles(){
         return ResponseEntity.ok(roleService.getAllRoles());
@@ -49,6 +52,7 @@ public class RoleController {
      * @return
      */
     @GetMapping("/read/{id}")
+    @PreAuthorize("hasAuthority('read_role')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<ResponseObject> getRoleById(@RequestParam Integer id){
         return ResponseEntity.ok(roleService.getById(id));
@@ -61,6 +65,7 @@ public class RoleController {
      * @return
      */
     @PutMapping("/update/{id}")
+    @PreAuthorize("hasAuthority('update_roles')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Role> updateRoleById(@RequestParam Integer id, @RequestBody RoleRequest role){
         return ResponseEntity.ok(roleService.updateById(id, role));
