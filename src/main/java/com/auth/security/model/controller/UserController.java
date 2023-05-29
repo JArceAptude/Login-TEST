@@ -26,7 +26,7 @@ public class UserController {
      * @return
      */
     @GetMapping("/all")
-    @PreAuthorize("hasAuthority('edit_all_users')")
+    @PreAuthorize("hasAuthority('read_all_users')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<List<Optional>> getAllActiveUsers(){
         return ResponseEntity.ok(userService.getAllActiveUsers());
@@ -38,6 +38,7 @@ public class UserController {
      * @return
      */
     @GetMapping("/id/{id}")
+    @PreAuthorize("hasAuthority('read_all_users')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<ResponseObject> getById(@RequestParam Integer id){
         return ResponseEntity.ok(userService.getById(id));
@@ -49,6 +50,7 @@ public class UserController {
      * @return
      */
     @GetMapping("/username/{username}")
+    @PreAuthorize("hasAuthority('read_all_users')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<ResponseObject> getByUsername(@RequestParam String username){
         return ResponseEntity.ok(userService.getByUsername(username));
@@ -61,6 +63,7 @@ public class UserController {
      * @return
      */
     @PutMapping("/update/{id}")
+    @PreAuthorize("hasAuthority('update_all_users')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<User> updateUser(@RequestParam Integer id, @RequestBody RegisterRequest request){
         return ResponseEntity.ok(userService.updateUserById(id, request));

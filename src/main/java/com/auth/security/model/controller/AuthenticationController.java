@@ -32,7 +32,6 @@ public class AuthenticationController {
      * @return ResponseEntity
      */
     @PostMapping("/register")
-    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request){
         return ResponseEntity.ok(authService.register(request));
     }
@@ -54,7 +53,7 @@ public class AuthenticationController {
      * @return ResponseEntity
      */
     @PutMapping("/update/{id}")
-    @PreAuthorize("hasAuthority('edit_user') or hasAuthority('edit_all_users')")
+    @PreAuthorize("hasAuthority('update_user') or hasAuthority('update_all_users')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<AuthenticationResponse> userUpdate(@RequestBody RegisterRequest request,@PathVariable("id") Integer id){
         return ResponseEntity.ok(authService.update(request, id));
@@ -77,6 +76,7 @@ public class AuthenticationController {
      * @return List User
      */
     @GetMapping("/getAll")
+    @PreAuthorize("hasAuthority('read_all_users')")
     public List<User> getAll(){
         return authService.getUsers();
     }
@@ -86,7 +86,7 @@ public class AuthenticationController {
      * @return ResponseEntity
      */
     @GetMapping("/refreshToken")
-    @PreAuthorize("hasAuthority('USER') or hasAuthority('MODERATOR') or hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('refresh_token')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<AuthenticationResponse> refreshToken(){
         return ResponseEntity.ok(authService.refreshToken());

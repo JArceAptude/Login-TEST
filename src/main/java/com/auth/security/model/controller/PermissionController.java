@@ -29,6 +29,7 @@ public class PermissionController {
      */
 
     @PostMapping("/new")
+    @PreAuthorize("hasAuthority('create_permissions')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Permission> newPermission(@RequestBody PermissionRequest request){
         return ResponseEntity.ok(permissionService.save(request));
@@ -40,6 +41,7 @@ public class PermissionController {
      * @return
      */
     @GetMapping("/read/{id}")
+    @PreAuthorize("hasAuthority('read_permissions')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<ResponseObject> getPermissionById(@RequestParam Integer id){
         return ResponseEntity.ok((permissionService.getById(id)));
@@ -51,6 +53,7 @@ public class PermissionController {
      */
 
     @GetMapping("/read/all")
+    @PreAuthorize("hasAuthority('read_permissions')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<List<Permission>> getAllPermissions(){
         return ResponseEntity.ok(permissionService.getAll());
@@ -64,6 +67,7 @@ public class PermissionController {
      */
 
     @PutMapping("/update/{id}")
+    @PreAuthorize("hasAuthority('update_permissions')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Permission> updatePermissionById(@RequestParam Integer id, @RequestBody PermissionRequest permission){
         return ResponseEntity.ok(permissionService.updateById(id, permission));
