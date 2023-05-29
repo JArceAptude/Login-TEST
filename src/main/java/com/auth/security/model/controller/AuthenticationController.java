@@ -1,11 +1,9 @@
 package com.auth.security.model.controller;
 
-import com.auth.security.authentication.AuthenticationRequest;
-import com.auth.security.authentication.AuthenticationResponse;
-import com.auth.security.authentication.PasswordRequest;
-import com.auth.security.model.User;
+import com.auth.security.authentication.*;
 import com.auth.security.model.service.AuthenticationService;
-import com.auth.security.authentication.RegisterRequest;
+import com.auth.security.model.Role;
+import com.auth.security.model.User;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +32,6 @@ public class AuthenticationController {
      * @return ResponseEntity
      */
     @PostMapping("/register")
-    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request){
         return ResponseEntity.ok(authService.register(request));
     }
@@ -56,7 +53,7 @@ public class AuthenticationController {
      * @return ResponseEntity
      */
     @PutMapping("/update/{id}")
-    @PreAuthorize("hasAuthority('edit_user') or hasAuthority('edit_all_users')")
+    @PreAuthorize("hasAuthority('update_user') or hasAuthority('update_all_users')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<AuthenticationResponse> userUpdate(@RequestBody RegisterRequest request,@PathVariable("id") Integer id){
         return ResponseEntity.ok(authService.update(request, id));
@@ -80,7 +77,6 @@ public class AuthenticationController {
      */
     @GetMapping("/getAll")
     @PreAuthorize("hasAuthority('read_all_users')")
-    @SecurityRequirement(name = "Bearer Authentication")
     public List<User> getAll(){
         return authService.getUsers();
     }
@@ -101,4 +97,9 @@ public class AuthenticationController {
     public String recoverPassword(PasswordRequest request){
         return authService.recoverPassword(request);
     }
+
+    @PostMapping("/resetPassword")
+    public String resetPassword(NewPasswordRequest request){
+        return authService.resetPassword(request);
+    };
 }
