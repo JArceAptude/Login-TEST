@@ -392,7 +392,7 @@ public class AuthenticationService {
         try{
             if (codeGenerated == request.getCode()){
                 User user = userRepository.findByEmail(request.getEmail()).orElseThrow();
-                user.setPassword(request.getPassword());
+                user.setPassword(passwordEncoder.encode(request.getPassword()));
                 userRepository.save(user);
                 codeGenerated = 0;
                 return "password successfully reset.";
